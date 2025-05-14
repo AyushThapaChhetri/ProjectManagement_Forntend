@@ -1,0 +1,21 @@
+/* :root { */
+/* Light theme defaults */
+/* --chakra-colors-background: white;
+  --chakra-colors-text: #1a202c;
+} */
+
+/* .dark { */
+/* Dark theme overrides */
+/* --chakra-colors-background: #1a202c;
+  --chakra-colors-text: white;
+} */
+
+:root {
+  --chakra-colors-white: #ffffff;
+  --chakra-colors-black: #1a202c;
+  --chakra-colors-gray-800: #1a202c;
+}
+
+.dark {
+  --chakra-colors-gray-800: #ffffff;
+}
