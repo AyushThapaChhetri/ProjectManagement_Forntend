@@ -69,8 +69,12 @@ const DrawerHamburger = () => {
               </Flex>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="outline">Sign Up</Button>
-              <Button>Login</Button>
+              <Button variant="outline" asChild>
+                <a href="signup"> Sign Up</a>
+              </Button>
+              <Button asChild>
+                <a href="login"> Login</a>
+              </Button>
             </Drawer.Footer>
             <Drawer.CloseTrigger asChild>
               <CloseButton size="sm" />

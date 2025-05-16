@@ -7,20 +7,16 @@ import {
   Center,
   Field,
   Flex,
-  // Heading,
+  Link,
   Input,
   Stack,
-  // VStack,
+  Text,
 } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import background from "@/assets/management.png";
-// import { FaEye } from "react-icons/fa";
-// import { FaEyeSlash } from "react-icons/fa";
-// import { useState } from "react";
-// import { toast } from "react-toastify";
-// import axios, { AxiosError } from "axios";
+import { FaHome } from "react-icons/fa";
 
 interface FormValues {
   email: string;
@@ -28,8 +24,6 @@ interface FormValues {
 }
 
 const Login = () => {
-  // const [passwordShowLogin, setPasswordShowLogin] = useState<boolean>(false);
-
   const {
     register,
     handleSubmit,
@@ -57,13 +51,7 @@ const Login = () => {
           bgImage={`url(${background})`}
           // display={{ base: "none", md: "block" }}
         ></Box>
-        {/* <Flex
-          direction={{ base: "column", md: "row" }}
-          height={{ base: "50%", md: "100%" }}
-          width={{ base: "100%", md: "50%" }}
-          justify="center"
-          align="center"
-        > */}
+
         <Center
           flex={1}
           w={{ base: "100%", md: "50%" }}
@@ -72,6 +60,16 @@ const Login = () => {
           py={{ base: 4, md: 8 }}
           bgColor="gray.300"
         >
+          <Link
+            href="/"
+            // color="blue"
+            position="absolute"
+            top={{ base: "40%", md: "0" }}
+            left={{ base: "2%", md: "51%" }}
+          >
+            <FaHome />
+            Home
+          </Link>
           <Card.Root
             bgColor="#f6f6f6"
             border="none"
@@ -109,6 +107,7 @@ const Login = () => {
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Email
+                      <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
                       placeholder="me@example.com"
@@ -122,6 +121,7 @@ const Login = () => {
                   <Field.Root invalid={!!errors.password} required>
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Password
+                      <Field.RequiredIndicator />
                     </Field.Label>
                     <PasswordInput
                       size={{ base: "sm", md: "md" }}
@@ -134,15 +134,29 @@ const Login = () => {
                 </Stack>
               </Card.Body>
               <Card.Footer pt={1} pb={10}>
-                <Button
-                  bgColor="#6822ef"
-                  _active={{ bg: "blue.300" }}
-                  color="white"
+                <Flex
+                  direction="column"
+                  align="center"
+                  // border="2px solid black"
                   width="100%"
-                  type="submit"
+                  gap="4"
                 >
-                  Login
-                </Button>
+                  <Button
+                    bgColor="#6822ef"
+                    _active={{ bg: "blue.300" }}
+                    color="white"
+                    width="100%"
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                  <Text>
+                    Don't have an Account? Click Here&nbsp;
+                    <Link variant="underline" href="signUp" color="blue">
+                      SignUp!
+                    </Link>
+                  </Text>
+                </Flex>
               </Card.Footer>
             </form>
           </Card.Root>

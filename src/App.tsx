@@ -2,6 +2,8 @@ import Login from "./pages/auth/Login";
 import { Routes, Route } from "react-router";
 import Home from "./pages/home/Home";
 import "@/styles/globals.css";
+import SignUp from "./pages/auth/SignUp";
+import BoardView from "./pages/board/boardView";
 // import { Provider } from "./components/ui/provider";
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
 
       {/* <Route element={<AuthLayout />}> */}
       <Route path="login" element={<Login />} />
+      <Route path="signUp" element={<SignUp />} />
+      <Route path="board" element={<BoardView />} />
       {/* <Route path="register" element={<Register />} /> */}
       {/* </Route> */}
 

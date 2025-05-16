@@ -61,8 +61,9 @@ const Navbar = () => {
             fontSize="sm"
             h="30px"
             _hover={{ bg: "purple.400" }}
+            asChild
           >
-            Sign Up
+            <a href="signUp">Sign Up</a>
           </Button>
         </Flex>
         {/* <Icon size="lg" display={{ base: "block", md: "none" }}>
