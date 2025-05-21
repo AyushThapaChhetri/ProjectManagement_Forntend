@@ -1,7 +1,7 @@
 // import React from 'react'
 // import { RxHamburgerMenu } from "react-icons/rx";
 import { Box, Button, Flex } from "@chakra-ui/react";
-import DrawerHamburger from "./DrawerHamburger";
+import DrawerHamburger from "./Drawer/DrawerHamburger";
 
 // import { Icon } from "@chakra-ui/react";
 
@@ -14,7 +14,7 @@ const Navbar = () => {
         align="center"
         px={{ base: "6", wide: "20" }}
         py={3}
-        boxShadow="sm"
+        // boxShadow="sm"
         h={{ base: "5rem", wide: "4rem" }}
         // h="20vh"
         // bg={"red"}

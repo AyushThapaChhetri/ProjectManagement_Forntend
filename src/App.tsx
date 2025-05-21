@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router";
 import Home from "./pages/home/Home";
 import "@/styles/globals.css";
 import SignUp from "./pages/auth/SignUp";
-import BoardView from "./pages/board/boardView";
+import BoardView from "./pages/board/BoardView";
 // import { Provider } from "./components/ui/provider";
 
 function App() {
