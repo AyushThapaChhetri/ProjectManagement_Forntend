@@ -17,6 +17,11 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import background from "@/assets/management.png";
 import { FaHome } from "react-icons/fa";
+import api from "@/api/Api";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import axios from "axios";
 
 interface FormValues {
   email: string;
@@ -24,14 +29,66 @@ interface FormValues {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken && refreshToken.trim() !== "") {
+      navigate("/");
+    }
+  });
+
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(loginSchema),
   });
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const response = await api.post("/auth/login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // console.log("Login Success:", response.data);
+      // console.log("User Details:", response.data.user)
+      // console.log(response.data.token);
+      // const token = response.data.token;
+      // console.log(response.data.data)
+      const { accessToken, refreshToken } = response.data.data;
+
+      // console.log("Access Token: ", accessToken);
+      // console.log("Refresh Token: ", refreshToken);
+
+      // localStorage.setItem("authToken", token);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      navigate("/");
+      toast.success("Logged In Successfully");
+      reset();
+    } catch (error: unknown) {
+      // console.log("Caught error:", error);
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          error.response?.data ||
+          error.message ||
+          "An unknown error occurred";
+        toast.error(message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else if (typeof error === "string") {
+        toast.error(error);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
   return (
     <>
       <Flex

@@ -30,6 +30,9 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
+import axios from "axios";
+import api from "@/api/Api";
 type FormValues = InferType<typeof signUpSchema>;
 
 // Explicitly define our FormValues type, making sure optionality is correct
@@ -70,14 +73,49 @@ const SignUp = () => {
   // });
   // } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const finalData = {
       ...data,
       dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     };
     console.log(finalData); // or send it to the API
-
     reset();
+    try {
+      // const response = await axios.post("http://localhost:5000/api/signup", values, {
+      // await axios.post("http://localhost:5000/api/user/signup",
+      //   finalData, {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+
+      await api.post("/user/signup", finalData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      // console.log("Signup Success:", response.data);
+      toast.success("Registered Successfully");
+      reset();
+
+      // Optional: Add success handling
+      // alert("Signup successful!");
+      // redirect to another page if needed
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          `${
+            error.response?.data?.message ||
+            error.response?.data ||
+            error.message
+          }`
+        );
+      } else if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log("Unknown error occurred");
+      }
+    }
   };
   return (
     <>
