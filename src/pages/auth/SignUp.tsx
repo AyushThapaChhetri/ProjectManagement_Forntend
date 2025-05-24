@@ -30,7 +30,6 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { yupResolver } from "@hookform/resolvers/yup";
-
 type FormValues = InferType<typeof signUpSchema>;
 
 // Explicitly define our FormValues type, making sure optionality is correct

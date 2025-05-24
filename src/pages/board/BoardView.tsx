@@ -1,9 +1,10 @@
+import ListApi from "@/api/ListApi";
 import Cards from "@/components/Cards/Cards";
 import type { List, Task } from "@/components/Cards/task.types";
-import { TaskContext } from "@/components/Cards/TaskContext";
 import DrawerSideBar from "@/components/Drawer/DrawerSideBar";
 // import DrawerSideBar from "@/components/DrawerSideBar";
 import Navbar from "@/components/Navbar";
+import { useTaskContext } from "@/hooks/useTaskContext";
 import {
   Box,
   Button,
@@ -13,7 +14,6 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import {
-  useContext,
   // useEffect,
   useRef,
   useState,
@@ -23,16 +23,14 @@ import {
 
 const BoardView = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  // const [addListButtonVanish, setAddListButtonVanish] = useState(true);
-  // const [addListFlexVanish, setAddListFlexVanish] = useState(true);
   const [showAddListForm, setShowAddListForm] = useState(false);
   const [listName, setListName] = useState({
     name: "",
   });
-  const context = useContext(TaskContext);
-  if (!context) throw new Error("No context of such");
 
-  const { state, dispatch } = context;
+  const { state, dispatch } = useTaskContext();
+
+  // console.log("State: ", state);
 
   const handleAddList = () => {
     // setAddListButtonVanish((prev) => !prev);
@@ -62,16 +60,17 @@ const BoardView = () => {
       console.log("Input is empty. Submission prevented.");
       return;
     } else {
-      const newList = {
-        id: `temp-${Date.now()}`,
-        uid: "",
-        name: listName.name,
-        projectId: 1,
-        createdAt: "",
-        updatedAt: "",
-        isEditing: true,
-      };
-      dispatch({ type: "ADD_LIST", payload: newList });
+      ListApi.createList(listName.name, dispatch);
+      // const newList = {
+      //   id: `temp-${Date.now()}`,
+      //   uid: "",
+      //   name: listName.name,
+      //   projectId: 1,
+      //   createdAt: "",
+      //   updatedAt: "",
+      //   isEditing: true,
+      // };
+      // dispatch({ type: "ADD_LIST", payload: newList });
       // setAddListFlexVanish((prev) => !prev);
       setShowAddListForm(false);
       setListName({ name: "" });
@@ -83,8 +82,6 @@ const BoardView = () => {
       setShowAddListForm(false);
       setListName({ name: "" }); // Clear input
     }
-    // setAddListButtonVanish((prev) => !prev);
-    // setAddListFlexVanish((prev) => !prev);
   };
   const sidebarRef = useRef(null);
   const responsiveWidthOpen = useBreakpointValue({ base: "60vw", md: "20vw" });
@@ -151,9 +148,6 @@ const BoardView = () => {
               overflowX="auto" // Enable horizontal scrolling
               whiteSpace="nowrap" // Keep cards in a single row
             >
-              {/* {state?.lists?.map((e: List) => (
-                <Cards key={e.id} id={e.id} name={e.name} />
-              ))} */}
               {state?.lists?.map((e: List) => {
                 const listTasks = state.tasks.filter(
                   (task: Task) => task.listId === e.id

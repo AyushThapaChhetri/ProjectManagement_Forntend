@@ -1,7 +1,6 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Flex, Text } from "@chakra-ui/react";
 import type { Task } from "./task.types";
 import {
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -11,21 +10,24 @@ import {
   type KeyboardEvent,
 } from "react";
 // import { TaskContext } from "./TaskContext";
-import { TaskContext } from "./TaskContext"; // Import TaskContextType
+// import { FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import TaskEdit from "./TaskEdit";
+import TaskApi from "@/api/TaskApi";
+import { useTaskContext } from "@/hooks/useTaskContext";
 
 interface SubTaskCardsProps {
   task: Task;
   listId: string;
+  listName: string;
 }
 
-const SubTaskCards = ({ task, listId }: SubTaskCardsProps) => {
-  const context = useContext(TaskContext);
+const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
+  const [showCheckBox, setShowCheckBox] = useState(false);
+  const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
 
-  if (!context) {
-    throw new Error("SubTaskCards must be used within a TaskProvider");
-  }
-
-  const { dispatch } = context;
+  const { dispatch } = useTaskContext();
+  // console.log("State: ", state);
 
   const [formData, setFormData] = useState({
     taskTitle: task.name || "", // Initialize with existing name if available
@@ -79,33 +81,56 @@ const SubTaskCards = ({ task, listId }: SubTaskCardsProps) => {
   const handleSubmit = () => {
     const trimmed = formData.taskTitle.trim();
     if (trimmed === "") {
-      dispatch({ type: "DELETE_TASK", payload: task.id });
+      // dispatch({ type: "DELETE_TASK", payload: { id: task.id } });
+      TaskApi.deleteTask(task.id, dispatch);
     } else {
-      dispatch({
-        type: "UPDATE_TASK",
-        payload: {
-          id: task.id,
-          updates: { name: trimmed, isEditing: false },
+      // dispatch({
+      //   type: "UPDATE_TASK",
+      //   payload: {
+      //     id: task.id,
+      //     updates: { name: trimmed, isEditing: false },
+      //   },
+      // });
+
+      TaskApi.updateTask(
+        task.id,
+        {
+          name: trimmed,
+          updatedAt: new Date(Date.now()).toISOString(),
+          isEditing: false,
         },
-      });
-      dispatch({
-        type: "ADD_TASK",
-        payload: {
-          id: `temp-${Date.now()}`,
-          listId: listId,
-          uid: "",
-          projectId: 1,
-          name: "",
-          priority: "Medium",
-          status: "Todo",
-          createdAt: "",
-          updatedAt: "",
-          isEditing: true,
-        },
-      });
+        dispatch
+      );
+
+      TaskApi.createTask(listId, dispatch);
+      // dispatch({
+      //   type: "ADD_TASK",
+      //   payload: {
+      //     id: `temp-${Date.now()}`,
+      //     listId: listId,
+      //     uid: "",
+      //     projectId: 1,
+      //     name: "",
+      //     priority: "low",
+      //     status: "todo",
+      //     createdAt: "",
+      //     updatedAt: "",
+      //     isEditing: true,
+      //   },
+      // });
     }
   };
 
+  const handleDelete = () => {
+    // console.log("Delete id: ", task.id);
+    TaskApi.deleteTask(task.id, dispatch);
+    // dispatch({
+    //   type: "DELETE_TASK",
+    //   payload: {
+    //     id: task.id,
+    //   },
+    // });
+  };
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // prevent newline
@@ -123,7 +148,8 @@ const SubTaskCards = ({ task, listId }: SubTaskCardsProps) => {
       <Flex
         w="100%"
         bg="white"
-        flexDirection="column"
+        flexDirection="row"
+        gap={2}
         wordBreak="break-word"
         whiteSpace="pre-wrap"
         // minH="30px"
@@ -137,7 +163,46 @@ const SubTaskCards = ({ task, listId }: SubTaskCardsProps) => {
         overflow="visible"
         position="relative"
         flexShrink={0}
+        onMouseEnter={() => {
+          // () => setShowCheckBox(true)
+          setShowCheckBox(true);
+        }}
+        // onMouseLeave={() => setShowCheckBox(false)}
+        onMouseLeave={() => {
+          // console.log("Task DialogOpen", isTaskEditDialogOpen);
+          //false vayo vane execute garcha
+          if (!isTaskEditDialogOpen) {
+            setShowCheckBox(false);
+          }
+        }}
       >
+        {/* Checkbox wrapper with transitions */}
+        <Box
+          position="absolute"
+          left="5px"
+          // Conditionally render only when not editing and showCheckBox is true
+          style={{
+            transition:
+              "opacity 0.2s ease, transform 0.2s ease, margin-right 0.2s ease",
+            opacity: showCheckBox && !task.isEditing ? 1 : 0,
+            transform:
+              showCheckBox && !task.isEditing
+                ? "translateX(0)"
+                : "translateX(-20px)", // Adjust as needed
+            pointerEvents: showCheckBox && !task.isEditing ? "auto" : "none", // Disable interaction when hidden
+            flexShrink: 0, // Prevent checkbox from shrinking
+            marginRight: showCheckBox && !task.isEditing ? "8px" : "0px", // Margin for spacing, transitioned
+            // Adjust position if you want it exactly at the left edge and text moves independently
+            // position: "absolute",
+            // left: "0",
+          }}
+        >
+          <Checkbox.Root size="sm">
+            <Checkbox.HiddenInput />
+            <Checkbox.Control />
+          </Checkbox.Root>
+        </Box>
+
         {task.isEditing ? (
           <form
             onSubmit={handleSubmit}
@@ -186,11 +251,29 @@ const SubTaskCards = ({ task, listId }: SubTaskCardsProps) => {
             wordBreak="break-word"
             whiteSpace="pre-wrap"
             overflowWrap="break-word"
+            paddingLeft={showCheckBox ? "28px" : "0px"} // Base on checkbox width + margin
+            transition="padding-left 0.5s ease"
             lineHeight="1.4"
             // overflowY={"auto"}
           >
             {task.name}
           </Text>
+        )}
+        {showCheckBox && !task.isEditing && (
+          <Flex gap={3}>
+            <Box cursor="pointer" _hover={{ color: "red.500" }}>
+              <MdDelete size={18} onClick={handleDelete} />
+            </Box>
+            <Box cursor="pointer" _hover={{ color: "blue.500" }}>
+              {/* <FaRegEdit size={18} /> */}
+              <TaskEdit
+                onDialogStateChange={setIsTaskEditDialogOpen}
+                setShowCheckBox={setShowCheckBox}
+                task={task}
+                listName={listName}
+              />
+            </Box>
+          </Flex>
         )}
       </Flex>
     </>

@@ -103,11 +103,11 @@ const Login = () => {
                   <Field.Root
                     invalid={!!errors.email}
                     width={{ base: "100%" }}
-                    required
+                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Email
-                      <Field.RequiredIndicator />
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Input
                       placeholder="me@example.com"
@@ -118,7 +118,10 @@ const Login = () => {
                       {errors.email?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                  <Field.Root invalid={!!errors.password} required>
+                  <Field.Root
+                    invalid={!!errors.password}
+                    // required
+                  >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Password
                       <Field.RequiredIndicator />

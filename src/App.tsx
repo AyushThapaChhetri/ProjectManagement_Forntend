@@ -4,6 +4,8 @@ import Home from "./pages/home/Home";
 import "@/styles/globals.css";
 import SignUp from "./pages/auth/SignUp";
 import BoardView from "./pages/board/BoardView";
+import "react-datepicker/dist/react-datepicker.css"; // Default styles first
+import "./styles/date-picker-overrides.css"; // Your overrides last to ensure they apply
 // import { Provider } from "./components/ui/provider";
 
 function App() {

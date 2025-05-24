@@ -1,0 +1,98 @@
+/* Style the input field to look like Chakra's Input component */
+.react-datepicker-wrapper .react-datepicker__input-container input {
+  /* Apply Chakra UI's input styles directly */
+  border: 1px solid var(--chakra-colors-gray-200); /* Use Chakra's color token */
+  border-radius: var(--chakra-radii-md); /* Use Chakra's border-radius token */
+  padding: var(--chakra-space-2) var(--chakra-space-4); /*Use Chakra's spacing tokens*/
+  text-align: center;
+  font-size: var(--chakra-fontSizes-md); /* Use Chakra's font size token */
+  height: var(--chakra-sizes-10); /* Standard Chakra input height */
+  width: 100%;
+  background: var(--chakra-colors-white); /* Ensure white background */
+}
+
+/* Focus state for the input */
+.react-datepicker-wrapper .react-datepicker__input-container input:focus {
+  border-color: var(--chakra-colors-grey-500); /* Chakra's focus border color */
+  box-shadow: 0 0 0 1px var(--chakra-colors-grey-500); /* Chakra's focus shadow */
+  outline: none;
+}
+
+/* Style the calendar container */
+.react-datepicker {
+  font-family: var(--chakra-fonts-body); /* Use Chakra's font family */
+  border: 1px solid var(--chakra-colors-gray-200);
+  border-radius: var(--chakra-radii-md);
+  box-shadow: var(--chakra-shadows-lg); /* Chakra's shadow token */
+  background-color: var(--chakra-colors-white);
+}
+
+/* Style the header (month/year navigation) */
+.react-datepicker__header {
+  background-color: var(--chakra-colors-gray-50);
+  border-bottom: 1px solid var(--chakra-colors-gray-200);
+  padding-top: var(--chakra-space-2);
+}
+
+/* Style month and year text */
+.react-datepicker__current-month,
+.react-datepicker__month-read-view--down-arrow,
+.react-datepicker__year-read-view--down-arrow {
+  color: var(--chakra-colors-gray-700);
+}
+
+/* Navigation buttons */
+.react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+  top: var(--chakra-space-3);
+  border: none; /* Remove default button border */
+}
+
+/* Day names (Mon, Tue, etc.) */
+.react-datepicker__day-name {
+  color: var(--chakra-colors-gray-600);
+}
+
+/* Days of the month */
+.react-datepicker__day {
+  color: var(--chakra-colors-gray-800);
+  border-radius: var(--chakra-radii-sm); /* Slightly rounded days */
+  padding: var(--chakra-space-1);
+}
+
+/* Hover and selected states for days */
+.react-datepicker__day:hover {
+  background-color: var(--chakra-colors-gray-100);
+}
+
+.react-datepicker__day--selected {
+  background-color: var(--chakra-colors-blue-500);
+  color: white;
+}
+
+.react-datepicker__day--selected:hover {
+  background-color: var(--chakra-colors-blue-600);
+}
+
+/* Today's date */
+.react-datepicker__day--today {
+  font-weight: bold;
+}
+
+/* Disable past dates (if applicable) */
+.react-datepicker__day--disabled {
+  color: var(--chakra-colors-gray-400);
+}
+
+/* Portal specific styles (if you use portal for calendar) */
+.react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle {
+  border-bottom-color: var(--chakra-colors-white);
+}
+.react-datepicker-popper[data-placement^="top"] .react-datepicker__triangle {
+  border-top-color: var(--chakra-colors-white);
+}
+
+/* You might need to adjust z-index if it's showing behind modals/dialogs */
+.react-datepicker-popper {
+  z-index: 2000; /* Ensure it's above other elements like your Dialog */
+}

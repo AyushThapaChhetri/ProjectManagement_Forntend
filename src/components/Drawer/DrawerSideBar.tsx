@@ -1,112 +1,21 @@
-// import {
-//   Button,
-//   Drawer,
-//   IconButton,
-//   Portal,
-//   useBreakpointValue,
-//   useDisclosure,
-//   //   Text,
-// } from "@chakra-ui/react";
-// import { MdKeyboardArrowRight } from "react-icons/md";
-// import { MdKeyboardArrowLeft } from "react-icons/md";
-
-// import React, { useEffect } from "react";
-// import type { RefObject } from "react";
-
-// type DrawerSideBarProps = {
-//   containerRef: RefObject<HTMLDivElement | null>;
-// };
-
-// const DrawerSideBar: React.FC<DrawerSideBarProps> = ({ containerRef }) => {
-//   const responsiveWidth = useBreakpointValue({ base: "80vw", md: "20vw" });
-//   // Chakra v3 ships useDisclosure
-//   // const { open, onOpen, onClose } = useDisclosure();
-//   const { open, setOpen, onClose } = useDisclosure();
-//   // Whenever open toggles, mutate the container's width
-
-//   useEffect(() => {
-//     // Apply transition only once (or whenever the ref changes)
-
-//     // console.log(open);
-//     if (!containerRef.current || !responsiveWidth) return;
-//     containerRef.current.style.transition = "width 0.5s ease-in-out";
-//     containerRef.current.style.width = open ? responsiveWidth : "3vw";
-//   }, [open, responsiveWidth, containerRef]);
-
-//   return (
-//     <>
-//       <Drawer.Root
-//         size="xs"
-//         placement="start"
-//         open={open}
-//         onOpenChange={({ open: nextOpen }) => setOpen(nextOpen)}
-//         closeOnInteractOutside={false}
-//       >
-//         <IconButton
-//           aria-label="Call support"
-//           rounded="full"
-//           size="2xs"
-//           // position="absolute"
-//           right="-15px"
-//           top="5px"
-//           variant="outline"
-//           bg="gray.300"
-//           color="white"
-//           display={open ? "none" : "flex"}
-//           onClick={() => setOpen((prev) => !prev)}
-//         >
-//           <MdKeyboardArrowRight />
-//         </IconButton>
-//         <Portal container={containerRef}>
-//           <Drawer.Backdrop pos="absolute" boxSize="full" pointerEvents="none" />
-//           <Drawer.Positioner pos="absolute" boxSize="full" pointerEvents="auto">
-//             <Drawer.Content>
-//               <Drawer.Header>
-//                 <Drawer.Title>Focus Workspace</Drawer.Title>
-//               </Drawer.Header>
-//               <Drawer.Body>
-//                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-//                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
-//               </Drawer.Body>
-//               <Drawer.Footer>
-//                 <Drawer.ActionTrigger asChild>
-//                   <Button variant="outline">Cancel</Button>
-//                 </Drawer.ActionTrigger>
-//                 <Button>Save</Button>
-//               </Drawer.Footer>
-//               <Drawer.CloseTrigger asChild>
-//                 {/* <CloseButton size="sm" onClick={onClose} /> */}
-//                 <IconButton
-//                   aria-label="Call support"
-//                   rounded="full"
-//                   size="2xs"
-//                   position="absolute"
-//                   right="-15px"
-//                   top="5px"
-//                   variant="outline"
-//                   bg="gray.300"
-//                   color="white"
-//                   zIndex="popover"
-//                   display={open ? "flex" : "none"}
-//                   onClick={onClose}
-//                 >
-//                   <MdKeyboardArrowLeft />
-//                 </IconButton>
-//               </Drawer.CloseTrigger>
-//             </Drawer.Content>
-//           </Drawer.Positioner>
-//         </Portal>
-//       </Drawer.Root>
-//     </>
-//   );
-// };
-
-// export default DrawerSideBar;
-
-import { Box, CloseButton, IconButton, Portal } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  CloseButton,
+  Flex,
+  Icon,
+  IconButton,
+  Portal,
+  Text,
+  Link,
+} from "@chakra-ui/react";
 import type { RefObject } from "react";
 // import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { FaFlipboard } from "react-icons/fa6";
+
+import F from "@/assets/F.png";
+
 // Define the props interface
 interface DrawerSideBarProps {
   isOpen: boolean; // Whether the drawer is open
@@ -156,7 +65,39 @@ const DrawerSideBar = ({
               top="2"
               right="2"
             />
-            <p>Drawer content goes here.</p>
+            <Flex direction="column" w="100%" h="100%" bg={"none"} gap={20}>
+              <Flex gap={2} borderBottomWidth="2px" h="50px">
+                <Avatar.Root
+                  shape="rounded"
+                  size={{ base: "sm", ultraHd: "lg" }}
+                >
+                  <Avatar.Fallback name="F" />
+                  <Avatar.Image src={F} />
+                </Avatar.Root>
+                <Text fontFamily="sans-serif" fontSize="24px">
+                  Focus Workspace
+                </Text>
+              </Flex>
+              <Link href="/board">
+                <Flex
+                  gap={5}
+                  justify="flex-start"
+                  // bg={"red"}
+                >
+                  <Icon size="lg">
+                    <FaFlipboard />
+                  </Icon>
+                  <Text
+                    fontFamily="sans-serif"
+                    fontSize="18px"
+                    // pt="2.5px"
+                  >
+                    Boards
+                  </Text>
+                </Flex>
+              </Link>
+            </Flex>
+            {/* <p>Drawer content goes here.</p> */}
           </Box>
         </Portal>
       )}

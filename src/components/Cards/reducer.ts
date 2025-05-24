@@ -18,7 +18,8 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
     case "DELETE_LIST":
       return {
         ...state,
-        lists: state.lists.filter((list) => list.id !== action.payload),
+        tasks: state.tasks.filter((task) => task.listId !== action.payload.id),
+        lists: state.lists.filter((list) => list.id !== action.payload.id),
       };
 
     // case "SET_TASKS":
@@ -37,7 +38,13 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
     case "DELETE_TASK":
       return {
         ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.payload),
+        tasks: state.tasks.filter((task) => task.id !== action.payload.id),
+      };
+
+    case "DELETE_ALL_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.filter((task) => task.listId !== action.payload.id),
       };
     default:
       return state;
