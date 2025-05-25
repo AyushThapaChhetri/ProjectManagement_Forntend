@@ -20,7 +20,7 @@ const DrawerHamburger = ({
   tokenAvailable,
   handleLogout,
 }: DrawerHamburgerProps) => {
-  console.log("token", tokenAvailable);
+  // console.log("token", tokenAvailable);
   return (
     <Drawer.Root size="xs">
       <Drawer.Trigger asChild>

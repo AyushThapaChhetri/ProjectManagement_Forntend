@@ -1,6 +1,6 @@
 import ListApi from "@/api/ListApi";
 import Cards from "@/components/Cards/Cards";
-import type { List, Task } from "@/components/Cards/task.types";
+import type { List, Task } from "@/components/Cards/reducer/task.types";
 import DrawerSideBar from "@/components/Drawer/DrawerSideBar";
 // import DrawerSideBar from "@/components/DrawerSideBar";
 import Navbar from "@/components/Navbar";
@@ -11,6 +11,7 @@ import {
   Flex,
   Heading,
   Input,
+  // Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import {
@@ -199,6 +200,9 @@ const BoardView = () => {
             </Flex>
           </Flex>
         </Flex>
+        {/* <Box>
+          <Text fontSize="26px">Active Card -{activeCard}</Text>
+        </Box> */}
       </Flex>
     </>
   );

@@ -5,7 +5,7 @@ import App from "./App.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import { Provider } from "./components/ui/provider.tsx";
 import { BrowserRouter } from "react-router";
-import { TaskProvider } from "./components/Cards/TaskProvider.tsx";
+import { TaskProvider } from "./components/Cards/context/TaskProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

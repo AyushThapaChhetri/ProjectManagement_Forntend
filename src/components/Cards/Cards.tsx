@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { IoMdAdd } from "react-icons/io";
 import SubTaskCards from "./SubTaskCards";
-import { type List, type Task } from "./task.types";
+import { type List, type Task } from "./reducer/task.types";
 import React from "react";
 
 import OptionDialog from "./OptionDialog";
@@ -18,6 +18,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { listSchema } from "@/schemas/listSchema";
 import type { InferType } from "yup";
+import TaskDropArea from "./TaskDropArea";
 
 type FormValues = InferType<typeof listSchema>;
 
@@ -29,7 +30,7 @@ interface CardsProps {
 }
 
 const Cards = React.memo(({ id, name, tasks }: CardsProps) => {
-  const { dispatch } = useTaskContext();
+  const { dispatch, onDrop } = useTaskContext();
 
   // console.log("Current state in Cards component:", state);
 
@@ -96,7 +97,7 @@ const Cards = React.memo(({ id, name, tasks }: CardsProps) => {
         p="8px"
         boxSizing="border-box"
         flexShrink="0"
-        gap={2}
+        // gap={2}
 
         // flexShrink={1}
       >
@@ -143,7 +144,7 @@ const Cards = React.memo(({ id, name, tasks }: CardsProps) => {
             direction="column"
             overflowY="auto"
             overflowX="hidden"
-            gap={2}
+            gap={"2px"}
             padding="5px"
             scrollMarginX="0px"
             userSelect="none"
@@ -165,13 +166,20 @@ const Cards = React.memo(({ id, name, tasks }: CardsProps) => {
               },
             }}
           >
-            {listTasks?.map((task: Task) => (
-              <SubTaskCards
-                key={task.id}
-                task={task}
-                listId={id}
-                listName={name}
-              />
+            {/* Drop area at the very top of an empty list  */}
+
+            <TaskDropArea listId={id} position={0} onDrop={onDrop} />
+
+            {listTasks?.map((task: Task, i) => (
+              <React.Fragment key={task.id}>
+                <SubTaskCards task={task} listId={id} listName={name} />
+                <TaskDropArea
+                  listId={id}
+                  position={i + 1}
+                  onDrop={onDrop}
+                  // listName={name}
+                />
+              </React.Fragment>
             ))}
           </Flex>
         )}

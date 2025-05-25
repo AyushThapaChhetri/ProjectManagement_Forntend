@@ -1,7 +1,7 @@
 import { Menu } from "@chakra-ui/react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import TaskApi from "@/api/TaskApi";
-import type { TaskAction } from "./task.types";
+import type { TaskAction } from "./reducer/task.types";
 import ListApi from "@/api/ListApi";
 
 interface OptionDialogProps {

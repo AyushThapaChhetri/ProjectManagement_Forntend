@@ -1,5 +1,5 @@
 // import type { TaskPayload } from "./types";
-import type { Task, TaskAction } from "@/components/Cards/task.types";
+import type { Task, TaskAction } from "@/components/Cards/reducer/task.types";
 
 type DispatchFn = React.Dispatch<TaskAction>;
 

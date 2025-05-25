@@ -19,7 +19,7 @@ import {
 import { useState } from "react";
 
 import { FaRegEdit } from "react-icons/fa";
-import type { Task } from "./task.types";
+import type { Task } from "./reducer/task.types";
 import { LuNotebookPen } from "react-icons/lu";
 import {
   Controller,

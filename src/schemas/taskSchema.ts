@@ -3,7 +3,7 @@ import {
   Statuses,
   type Status,
   type Priority,
-} from "@/components/Cards/task.types";
+} from "@/components/Cards/reducer/task.types";
 import * as yup from "yup";
 
 const optionalTrimmedString = () =>

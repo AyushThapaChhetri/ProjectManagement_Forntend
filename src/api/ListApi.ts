@@ -1,4 +1,4 @@
-import type { TaskAction } from "@/components/Cards/task.types";
+import type { TaskAction } from "@/components/Cards/reducer/task.types";
 
 type DispatchFn = React.Dispatch<TaskAction>;
 const ListApi = {

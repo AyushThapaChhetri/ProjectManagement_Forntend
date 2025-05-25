@@ -1,5 +1,5 @@
 import { Box, Checkbox, Flex, Text } from "@chakra-ui/react";
-import type { Task } from "./task.types";
+import type { Task } from "./reducer/task.types";
 import {
   useEffect,
   useRef,
@@ -25,8 +25,9 @@ interface SubTaskCardsProps {
 const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
   const [showCheckBox, setShowCheckBox] = useState(false);
   const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
+  // const [activeCard, setActiveCard] = useState<string | null>(null);
 
-  const { dispatch } = useTaskContext();
+  const { dispatch, setActiveCard } = useTaskContext();
   // console.log("State: ", state);
 
   const [formData, setFormData] = useState({
@@ -149,7 +150,7 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
         w="100%"
         bg="white"
         flexDirection="row"
-        gap={2}
+        // gap={2}
         wordBreak="break-word"
         whiteSpace="pre-wrap"
         // minH="30px"
@@ -158,6 +159,11 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
         p="5px"
         rounded="sm"
         justify="center"
+        cursor="grab"
+        _active={{
+          opacity: 0.7,
+          border: "1px solid black",
+        }}
         align="flex-start"
         // Add these CSS properties
         overflow="visible"
@@ -255,6 +261,9 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
             transition="padding-left 0.5s ease"
             lineHeight="1.4"
             // overflowY={"auto"}
+            draggable
+            onDragStart={() => setActiveCard(task.id)}
+            onDragEnd={() => setActiveCard(null)}
           >
             {task.name}
           </Text>
