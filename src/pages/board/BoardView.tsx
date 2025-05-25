@@ -187,6 +187,7 @@ const BoardView = () => {
                         onChange={handleInputChange}
                         onBlur={handleBlur}
                         autoFocus
+                        fontSize="16px"
                         size="sm"
                       />
                       <Button type="submit"> AddList</Button>

@@ -178,8 +178,8 @@ const TaskEdit = ({
                             textAlign="start"
                             invalid={!!errors.name}
                             defaultValue={field.value}
+                            fontSize="16px"
                             onChange={field.onChange}
-                            activationMode="dblclick"
                           >
                             <Editable.Preview />
                             <Editable.Input />
@@ -202,6 +202,7 @@ const TaskEdit = ({
                       <Textarea
                         placeholder="Start typing..."
                         variant="subtle"
+                        fontSize="16px"
                         {...register("description")}
                       />
                       <Field.ErrorText>

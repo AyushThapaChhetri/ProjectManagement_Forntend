@@ -5,12 +5,22 @@ import {
   Drawer,
   Flex,
   Icon,
+  Link,
   Portal,
   Text,
 } from "@chakra-ui/react";
 import { RxHamburgerMenu } from "react-icons/rx";
 
-const DrawerHamburger = () => {
+interface DrawerHamburgerProps {
+  tokenAvailable: boolean;
+  handleLogout: () => Promise<void>;
+}
+
+const DrawerHamburger = ({
+  tokenAvailable,
+  handleLogout,
+}: DrawerHamburgerProps) => {
+  console.log("token", tokenAvailable);
   return (
     <Drawer.Root size="xs">
       <Drawer.Trigger asChild>
@@ -39,7 +49,8 @@ const DrawerHamburger = () => {
                       borderBottom: "2px solid purple",
                     }}
                   >
-                    Product
+                    <Link href="/board">Boards</Link>
+                    {/* Product */}
                   </Text>
                 </Box>
                 <Box cursor="pointer">
@@ -69,12 +80,17 @@ const DrawerHamburger = () => {
               </Flex>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="outline" asChild>
-                <a href="signup"> Sign Up</a>
-              </Button>
-              <Button asChild>
-                <a href="login"> Login</a>
-              </Button>
+              {!tokenAvailable && (
+                <>
+                  <Button variant="outline" asChild>
+                    <a href="signup"> Sign Up</a>
+                  </Button>
+                  <Button asChild>
+                    <a href="login"> Login</a>
+                  </Button>
+                </>
+              )}
+              {tokenAvailable && <Button onClick={handleLogout}>Logout</Button>}
             </Drawer.Footer>
             <Drawer.CloseTrigger asChild>
               <CloseButton size="sm" />

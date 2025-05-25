@@ -110,6 +110,7 @@ const Cards = React.memo(({ id, name, tasks }: CardsProps) => {
                 <Box>
                   <Editable.Root
                     size={"sm"}
+                    fontSize="16px"
                     invalid={!!errors.name}
                     defaultValue={field.value}
                     onChange={field.onChange}

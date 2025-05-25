@@ -226,11 +226,11 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
                 borderRadius: "5px",
                 maxHeight: "160px",
                 resize: "none",
+                fontSize: "16px",
                 // overflow: "hidden",
                 overflowY: "auto", // Changed from hidden to auto
                 wordBreak: "break-word",
                 whiteSpace: "pre-wrap",
-                fontSize: "14px",
                 padding: "8px",
                 // Add these properties
                 position: "relative",

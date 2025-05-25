@@ -20,6 +20,7 @@ import { FaMicrosoft } from "react-icons/fa";
 import { FaApple } from "react-icons/fa";
 
 const Home = () => {
+  // console.log("API URL →", import.meta.env.VITE_API_URL);
   return (
     <>
       <Flex justify="center">

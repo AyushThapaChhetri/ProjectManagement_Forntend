@@ -5,7 +5,7 @@
   border-radius: var(--chakra-radii-md); /* Use Chakra's border-radius token */
   padding: var(--chakra-space-2) var(--chakra-space-4); /*Use Chakra's spacing tokens*/
   text-align: center;
-  font-size: var(--chakra-fontSizes-md); /* Use Chakra's font size token */
+  font-size: 16px; /* Use Chakra's font size token */
   height: var(--chakra-sizes-10); /* Standard Chakra input height */
   width: 100%;
   background: var(--chakra-colors-white); /* Ensure white background */
@@ -95,4 +95,23 @@
 /* You might need to adjust z-index if it's showing behind modals/dialogs */
 .react-datepicker-popper {
   z-index: 2000; /* Ensure it's above other elements like your Dialog */
+}
+
+/* Safari-specific placeholder font size */
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input::placeholder {
+  font-size: 12px;
+}
+
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input::-webkit-input-placeholder {
+  font-size: 12px;
+}
+
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input:-webkit-autofill::first-line {
+  font-size: 12px;
 }

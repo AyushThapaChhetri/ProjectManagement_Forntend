@@ -19,3 +19,15 @@
 .dark {
   --chakra-colors-gray-800: #ffffff;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0; /* or your desired background */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  height: 100%;
+  box-sizing: border-box;
+}

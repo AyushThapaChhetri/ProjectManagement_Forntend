@@ -138,7 +138,10 @@ const Navbar = () => {
         {/* <Icon size="lg" display={{ base: "block", md: "none" }}>
           <RxHamburgerMenu />
         </Icon> */}
-        <DrawerHamburger />
+        <DrawerHamburger
+          tokenAvailable={tokenAvailable}
+          handleLogout={handleLogout}
+        />
       </Flex>
     </>
   );

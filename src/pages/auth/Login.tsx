@@ -169,6 +169,7 @@ const Login = () => {
                     <Input
                       placeholder="me@example.com"
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("email")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
@@ -185,6 +186,7 @@ const Login = () => {
                     </Field.Label>
                     <PasswordInput
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("password")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">

@@ -33,6 +33,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import axios from "axios";
 import api from "@/api/Api";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 type FormValues = InferType<typeof signUpSchema>;
 
 // Explicitly define our FormValues type, making sure optionality is correct
@@ -57,6 +59,13 @@ const items = [
 ];
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken && refreshToken.trim() !== "") {
+      navigate("/");
+    }
+  });
   const [isShortScreen] = useMediaQuery(["(min-height: 801px)"]);
   const {
     control,
@@ -197,6 +206,7 @@ const SignUp = () => {
                       <Input
                         placeholder="First Name"
                         size={{ base: "sm", md: "md" }}
+                        fontSize="16px"
                         {...register("firstName")}
                       />
                       <Field.ErrorText color="red" fontSize="xs">
@@ -215,6 +225,7 @@ const SignUp = () => {
                       <Input
                         placeholder="Last Name"
                         size={{ base: "sm", md: "md" }}
+                        fontSize="16px"
                         {...register("lastName")}
                       />
                       <Field.ErrorText color="red" fontSize="xs">
@@ -234,6 +245,7 @@ const SignUp = () => {
                     <Input
                       placeholder="me@example.com"
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("email")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
@@ -246,6 +258,7 @@ const SignUp = () => {
                       <Field.RequiredIndicator />
                     </Field.Label>
                     <PasswordInput
+                      fontSize="16px"
                       size={{ base: "sm", md: "md" }}
                       {...register("password")}
                     />
@@ -259,6 +272,7 @@ const SignUp = () => {
                       <Field.RequiredIndicator />
                     </Field.Label>
                     <PasswordInput
+                      fontSize="16px"
                       size={{ base: "sm", md: "md" }}
                       {...register("confirmPassword")}
                     />
@@ -344,6 +358,7 @@ const SignUp = () => {
                     <Input
                       placeholder="Address"
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("address")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
@@ -357,6 +372,7 @@ const SignUp = () => {
                     <Input
                       placeholder="Phone no."
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("phone")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
@@ -370,6 +386,7 @@ const SignUp = () => {
                     <Input
                       placeholder="Job Title"
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("title")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
