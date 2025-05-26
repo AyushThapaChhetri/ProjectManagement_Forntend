@@ -27,7 +27,7 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
   const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
   // const [activeTask, setActiveTask] = useState<string | null>(null);
 
-  const { dispatch, setActiveTask } = useTaskContext();
+  const { dispatch, setActiveList, setActiveTask } = useTaskContext();
   // console.log("State: ", state);
 
   const [formData, setFormData] = useState({
@@ -262,7 +262,13 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
             lineHeight="1.4"
             // overflowY={"auto"}
             draggable
-            onDragStart={() => setActiveTask(task.id)}
+            // onDragStart={() => setActiveTask(task.id)}
+            onDragStart={(e) => {
+              e.stopPropagation();
+              e.dataTransfer.setData("text/plain", task.id); // required for browser drag
+              setActiveList(null); // clear any list drag
+              setActiveTask(task.id);
+            }}
             onDragEnd={() => setActiveTask(null)}
           >
             {task.name}

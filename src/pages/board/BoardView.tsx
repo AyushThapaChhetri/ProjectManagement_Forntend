@@ -1,4 +1,5 @@
 import ListApi from "@/api/ListApi";
+import CardDropArea from "@/components/Cards/CardDropArea";
 import Cards from "@/components/Cards/Cards";
 import type { List, Task } from "@/components/Cards/reducer/task.types";
 import DrawerSideBar from "@/components/Drawer/DrawerSideBar";
@@ -12,9 +13,11 @@ import {
   Heading,
   Input,
   // Text,
+  // Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import {
+import React, {
+  // useEffect,
   // useEffect,
   useRef,
   useState,
@@ -29,9 +32,28 @@ const BoardView = () => {
     name: "",
   });
 
-  const { state, dispatch } = useTaskContext();
+  const { state, onDrop, dispatch } = useTaskContext();
 
-  // console.log("State: ", state);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // NEW: State to store the height of the currently dragged card
+  const [draggedCardHeight, setDraggedCardHeight] = useState<
+    number | undefined
+  >(undefined);
+
+  // NEW: Callback function to receive height from the Cards component when drag starts
+  const handleCardDragStart = (cardId: string, height: number) => {
+    setDraggedCardHeight(height); // Set the height to apply to all drop areas
+    console.log(
+      `BoardView: Card ${cardId} started dragging. Its height: ${height}px`
+    );
+  };
+
+  // NEW: Callback function to reset height when drag ends
+  const handleCardDragEnd = (cardId: string) => {
+    setDraggedCardHeight(undefined); // Clear the height when drag ends
+    console.log(`BoardView: Card ${cardId} stopped dragging.`);
+  };
 
   const handleAddList = () => {
     // setAddListButtonVanish((prev) => !prev);
@@ -125,24 +147,48 @@ const BoardView = () => {
             <Flex
               padding="2rem"
               w="100%"
-              gap={10}
+              // gap={10}
               // bg="blue"
               boxSizing="border-box"
               flexGrow="1"
               overflowX="auto" // Enable horizontal scrolling
               whiteSpace="nowrap" // Keep cards in a single row
             >
-              {state?.lists?.map((e: List) => {
+              {/* NEW: Initial CardDropArea, uses the draggedCardHeight */}
+              <CardDropArea
+                position={0}
+                onDrop={onDrop}
+                expectedHeight={draggedCardHeight}
+              />
+
+              {state?.lists?.map((e: List, i) => {
                 const listTasks = state.tasks.filter(
                   (task: Task) => task.listId === e.id
                 );
                 return (
-                  <Cards
-                    key={e.id}
-                    id={e.id}
-                    name={e.name}
-                    tasks={listTasks} // Pass filtered tasks
-                  />
+                  <React.Fragment key={e.id}>
+                    <Cards
+                      key={e.id}
+                      id={e.id}
+                      name={e.name}
+                      tasks={listTasks} // Pass filtered tasks
+                      draggable
+                      innerRef={(el) => {
+                        // Using the direct `ref` prop
+                        if (el) cardRefs.current.set(e.id, el);
+                        else cardRefs.current.delete(e.id);
+                      }}
+                      onDragStartCallback={handleCardDragStart} // Pass callback
+                      onDragEndCallback={handleCardDragEnd} // Pass callback
+                    />
+
+                    {/* NEW: Subsequent CardDropArea, also uses the draggedCardHeight */}
+                    <CardDropArea
+                      position={i + 1}
+                      onDrop={onDrop}
+                      expectedHeight={draggedCardHeight}
+                    />
+                  </React.Fragment>
                 );
               })}
               {/* {addListButtonVanish ? ( */}
@@ -183,8 +229,9 @@ const BoardView = () => {
             </Flex>
           </Flex>
         </Flex>
-        {/* <Box>
-          <Text fontSize="26px">Active Card -{activeCard}</Text>
+        {/* <Box position="absolute" bottom="40px">
+          <Text fontSize="26px">Active Card -{activeTask}</Text>
+          <Text fontSize="26px">Active List -{activeList}</Text>
         </Box> */}
       </Flex>
     </>

@@ -8,7 +8,9 @@ export interface TaskContextType {
   dispatch: React.Dispatch<TaskAction>;
   activeTask: string | null;
   setActiveTask: React.Dispatch<React.SetStateAction<string | null>>;
-  onDrop: (listId: string, position: number) => void;
+  activeList: string | null;
+  setActiveList: React.Dispatch<React.SetStateAction<string | null>>;
+  onDrop: (position: number, listId?: string) => void;
 }
 
 export const TaskContext = createContext<TaskContextType | undefined>(

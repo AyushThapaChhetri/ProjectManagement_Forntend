@@ -22,6 +22,43 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
         lists: state.lists.filter((list) => list.id !== action.payload.id),
       };
 
+    case "MOVE_LIST": {
+      const { listId, position } = action.payload;
+
+      // const listToMove = state.lists.find((t) => t.id === listId);
+      // if (!listToMove) return state;
+
+      // const filteredState = state.lists.filter((t) => t.id !== listId);
+
+      // reordered = [...[A, B], X, ...[C, D]] → [A, B, X, C, D]
+      // Break an array into individual elements and flatten them into a new array.
+      // const reordered = [
+      //   ...filteredState.slice(0, position),
+      //   listToMove,
+      //   ...filteredState.slice(position),
+      // ];
+      const oldIndex = state.lists.findIndex((l) => l.id === listId);
+      if (oldIndex === -1) return state;
+
+      // Compute the adjusted insertion index
+      const insertAt = oldIndex < position ? position - 1 : position;
+
+      // Build the filtered list (item removed)
+      const filtered = state.lists.filter((l) => l.id !== listId);
+
+      // Re-insert at the corrected position
+      const reordered = [
+        ...filtered.slice(0, insertAt),
+        state.lists[oldIndex], // the item being moved
+        ...filtered.slice(insertAt),
+      ];
+
+      return {
+        ...state,
+        lists: reordered,
+      };
+    }
+
     // case "SET_TASKS":
     //   return { ...state, tasks: action.payload };
     case "ADD_TASK":

@@ -62,5 +62,6 @@ export type TaskAction =
   // Add list actions
   | { type: "ADD_LIST"; payload: List }
   | { type: "UPDATE_LIST"; payload: { id: string; updates: Partial<List> } }
-  | { type: "DELETE_LIST"; payload: { id: string } };
+  | { type: "DELETE_LIST"; payload: { id: string } }
+  | { type: "MOVE_LIST"; payload: { listId: string; position: number } };
 // | { type: "DELETE_LIST"; payload: string };
