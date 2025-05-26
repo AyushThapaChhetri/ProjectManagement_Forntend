@@ -6,8 +6,8 @@ export interface TaskContextType {
   // state: TaskState;
   state: AppState;
   dispatch: React.Dispatch<TaskAction>;
-  activeCard: string | null;
-  setActiveCard: React.Dispatch<React.SetStateAction<string | null>>;
+  activeTask: string | null;
+  setActiveTask: React.Dispatch<React.SetStateAction<string | null>>;
   onDrop: (listId: string, position: number) => void;
 }
 

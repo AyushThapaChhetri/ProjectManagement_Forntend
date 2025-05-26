@@ -45,13 +45,6 @@ const BoardView = () => {
       [name]: value,
     }));
   };
-  // useEffect(() => {
-  //   console.log("Lists updated: ", state.lists);
-  // }, [state.lists]);
-
-  // useEffect(() => {
-  //   console.log("Form boolean changed: ", showAddListForm);
-  // }, [showAddListForm]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -62,17 +55,7 @@ const BoardView = () => {
       return;
     } else {
       ListApi.createList(listName.name, dispatch);
-      // const newList = {
-      //   id: `temp-${Date.now()}`,
-      //   uid: "",
-      //   name: listName.name,
-      //   projectId: 1,
-      //   createdAt: "",
-      //   updatedAt: "",
-      //   isEditing: true,
-      // };
-      // dispatch({ type: "ADD_LIST", payload: newList });
-      // setAddListFlexVanish((prev) => !prev);
+
       setShowAddListForm(false);
       setListName({ name: "" });
     }

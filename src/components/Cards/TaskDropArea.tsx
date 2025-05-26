@@ -19,7 +19,7 @@ const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
       rounded="sm"
       flexShrink={0}
       opacity={showDrop ? 1 : 0}
-      transition={showDrop ? "all 0.2s ease-in-out" : "none"}
+      transition={showDrop ? "all 0.1s ease-out" : "none"}
       onDragEnter={() => setShowDrop(true)}
       onDragLeave={() => setShowDrop(false)}
       onDrop={(e) => {

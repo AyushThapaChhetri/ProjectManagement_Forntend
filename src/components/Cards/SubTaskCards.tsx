@@ -25,9 +25,9 @@ interface SubTaskCardsProps {
 const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
   const [showCheckBox, setShowCheckBox] = useState(false);
   const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
-  // const [activeCard, setActiveCard] = useState<string | null>(null);
+  // const [activeTask, setActiveTask] = useState<string | null>(null);
 
-  const { dispatch, setActiveCard } = useTaskContext();
+  const { dispatch, setActiveTask } = useTaskContext();
   // console.log("State: ", state);
 
   const [formData, setFormData] = useState({
@@ -262,8 +262,8 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
             lineHeight="1.4"
             // overflowY={"auto"}
             draggable
-            onDragStart={() => setActiveCard(task.id)}
-            onDragEnd={() => setActiveCard(null)}
+            onDragStart={() => setActiveTask(task.id)}
+            onDragEnd={() => setActiveTask(null)}
           >
             {task.name}
           </Text>

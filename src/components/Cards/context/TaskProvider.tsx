@@ -11,19 +11,19 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     return localData ? JSON.parse(localData) : initialState;
   });
 
-  const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [activeTask, setActiveTask] = useState<string | null>(null);
   // console.log("state: ", state);
   const onDrop = (listId: string, position: number) => {
     // console.log(
-    //   `${activeCard} is going to place into ${listId} and at the postion ${position}`
+    //   `${activeTask} is going to place into ${listId} and at the postion ${position}`
     // );
 
-    if (activeCard == null || activeCard === undefined) return;
+    if (activeTask == null || activeTask === undefined) return;
 
     dispatch({
       type: "MOVE_TASK",
       payload: {
-        id: activeCard,
+        id: activeTask,
         listId,
         position,
       },
@@ -36,7 +36,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <TaskContext.Provider
-      value={{ state, dispatch, activeCard, setActiveCard, onDrop }}
+      value={{ state, dispatch, activeTask, setActiveTask, onDrop }}
     >
       {children}
     </TaskContext.Provider>
