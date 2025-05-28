@@ -72,7 +72,7 @@ const TaskEdit = ({
   task,
   listName,
 }: TaskEditProps) => {
-  const { dispatch } = useTaskContext();
+  const { taskActions } = useTaskContext();
   // No need to use because of React hook form controller does it self
   // const [date, setDate] = useState<{
   //   startDate: Date | null;
@@ -132,13 +132,13 @@ const TaskEdit = ({
     //   dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     // };
     handleSetShowCheckBox();
-    TaskApi.updateTask(
+    TaskApi.editTask(
       task.id,
       {
         ...data,
         updatedAt: new Date(Date.now()).toISOString(),
       },
-      dispatch
+      taskActions
     );
     // console.log("Form is submitting..."); // This should log
     // console.log(data); // Your final form data

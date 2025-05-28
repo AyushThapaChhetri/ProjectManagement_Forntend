@@ -1,10 +1,14 @@
 // import type { TaskPayload } from "./types";
-import type { Task, TaskAction } from "@/components/Cards/reducer/task.types";
+import type { TaskContextType } from "@/components/Cards/context/TaskContext";
+import type {
+  // List,
+  Task,
+} from "@/components/Cards/reducer/task.types";
 
-type DispatchFn = React.Dispatch<TaskAction>;
+type taskActions = TaskContextType["taskActions"];
 
 const TaskApi = {
-  async createTask(listId: string, dispatch: DispatchFn) {
+  async createTask(listId: string, taskActions: taskActions) {
     const newTask: Task = {
       id: `temp-${Date.now()}`, // Temporary ID; replace with backend ID
       listId: listId,
@@ -18,7 +22,7 @@ const TaskApi = {
       isEditing: true,
     };
     // console.log("Creating task:", newTask);
-    dispatch({ type: "ADD_TASK", payload: newTask });
+    taskActions.addTask(newTask);
     // Example: return await axios.post("/tasks", payload);
   },
 
@@ -27,21 +31,20 @@ const TaskApi = {
   //   // Example: return await axios.get(`/tasks?listId=${listId}`);
   // },
 
-  async updateTask(id: string, task: Partial<Task>, dispatch: DispatchFn) {
+  async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
     // console.log("Updating task:", task);
-
-    dispatch({ type: "UPDATE_TASK", payload: { id: id, updates: task } });
+    taskActions.updateTask(id, task);
   },
 
-  async deleteTask(id: string, dispatch: DispatchFn) {
+  async deleteTask(id: string, taskActions: taskActions) {
     // console.log("Deleting task:", id);
-    dispatch({ type: "DELETE_TASK", payload: { id: id } });
+    taskActions.deleteTask(id);
     // Example: return await axios.delete(`/tasks/${id}`);
   },
 
-  async deleteAllTask(id: string, dispatch: DispatchFn) {
+  async deleteAllTask(id: string, taskActions: taskActions) {
     // console.log("Deleting all task with ListId:", id);
-    dispatch({ type: "DELETE_ALL_TASK", payload: { id: id } });
+    taskActions.deleteAllTask(id);
     // Example: return await axios.delete(`/tasks/${id}`);
   },
 };

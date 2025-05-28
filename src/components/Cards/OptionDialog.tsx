@@ -1,26 +1,31 @@
 import { Menu } from "@chakra-ui/react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import TaskApi from "@/api/TaskApi";
-import type { TaskAction } from "./reducer/task.types";
 import ListApi from "@/api/ListApi";
+import type { TaskContextType } from "./context/TaskContext";
 
 interface OptionDialogProps {
   listId: string;
-  dispatch: React.Dispatch<TaskAction>;
+  taskActions: TaskContextType["taskActions"];
+  listActions: TaskContextType["listActions"];
 }
 
-const OptionDialog = ({ listId, dispatch }: OptionDialogProps) => {
+const OptionDialog = ({
+  listId,
+  taskActions,
+  listActions,
+}: OptionDialogProps) => {
   const handleAddCard = () => {
     // console.log("Add card selected");
-    TaskApi.createTask(listId, dispatch);
+    TaskApi.createTask(listId, taskActions);
   };
   const handleRemoveList = () => {
     // console.log("Remove List with all its Tasks");
-    ListApi.deleteList(listId, dispatch);
+    ListApi.deleteList(listId, listActions);
   };
   const handleRemoveAllTask = () => {
     // console.log("Remove All Task");
-    TaskApi.deleteAllTask(listId, dispatch);
+    TaskApi.deleteAllTask(listId, taskActions);
   };
   return (
     <>

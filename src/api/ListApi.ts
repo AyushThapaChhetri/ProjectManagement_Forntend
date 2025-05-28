@@ -1,8 +1,8 @@
-import type { TaskAction } from "@/components/Cards/reducer/task.types";
+import type { TaskContextType } from "@/components/Cards/context/TaskContext";
 
-type DispatchFn = React.Dispatch<TaskAction>;
+type listActions = TaskContextType["listActions"];
 const ListApi = {
-  async createList(listName: string, dispatch: DispatchFn) {
+  async createList(listName: string, listActions: listActions) {
     // console.log("Creation of list");
     const newList = {
       id: `temp-${Date.now()}`,
@@ -13,13 +13,17 @@ const ListApi = {
       updatedAt: "",
       isEditing: true,
     };
-    dispatch({ type: "ADD_LIST", payload: newList });
+    listActions.addList(newList);
   },
-  // async updateList(){
-
-  // }
-  async deleteList(listId: string, dispatch: DispatchFn) {
-    dispatch({ type: "DELETE_LIST", payload: { id: listId } });
+  async updateList(listId: string, listName: string, listActions: listActions) {
+    const editedList = {
+      name: listName,
+      updatedAt: new Date(Date.now()).toISOString(),
+    };
+    listActions.updateList(listId, editedList);
+  },
+  async deleteList(listId: string, listActions: listActions) {
+    listActions.deleteList(listId);
   },
   // async (){
 

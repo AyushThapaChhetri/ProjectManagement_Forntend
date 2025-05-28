@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { listSchema } from "@/schemas/listSchema";
 import type { InferType } from "yup";
 import TaskDropArea from "./TaskDropArea";
+import ListApi from "@/api/ListApi";
 type FormValues = InferType<typeof listSchema>;
 
 interface CardsProps {
@@ -40,7 +41,8 @@ const Cards = React.memo(
     onDragStartCallback,
     onDragEndCallback,
   }: CardsProps) => {
-    const { dispatch, setActiveList, setActiveTask, onDrop } = useTaskContext();
+    const { selectList, selectTask, taskActions, listActions, onDrop } =
+      useTaskContext();
     const localCardRef = useRef<HTMLDivElement>(null);
 
     const setCombinedRef = useCallback(
@@ -61,7 +63,7 @@ const Cards = React.memo(
     // console.log("Current state in Cards component:", state);
 
     const handleAddTask = () => {
-      TaskApi.createTask(id, dispatch);
+      TaskApi.createTask(id, taskActions);
     };
     // Filter tasks to only show those belonging to this specific list
     const listTasks = tasks.filter((task) => task.listId === id);
@@ -76,8 +78,8 @@ const Cards = React.memo(
     });
     const onSubmit: SubmitHandler<FormValues> = (data) => {
       console.log("Form is submitting..."); // This should log
-      console.log(data); // Your final form data
-
+      console.log(data.name); // Your final form data
+      ListApi.updateList(id, data.name, listActions);
       // reset();
     };
     // const taskArrayLength = listTasks.length === 0;
@@ -93,15 +95,15 @@ const Cards = React.memo(
           draggable={draggable}
           onDragStart={(e) => {
             e.dataTransfer.setData("text/plain", id); // “kickstart” native drag
-            setActiveTask(null); // clear any task drag
-            setActiveList(id);
+            selectTask(null);
+            selectList(id);
             // NEW: Get height from localCardRef and call the callback
             if (localCardRef.current) {
               onDragStartCallback(id, localCardRef.current.offsetHeight);
             }
           }}
           onDragEnd={() => {
-            setActiveList(null);
+            selectList(null);
             // NEW: Call the drag end callback
             onDragEndCallback(id);
           }}
@@ -154,7 +156,11 @@ const Cards = React.memo(
               />
             </form>
             <Box bg={"none"}>
-              <OptionDialog listId={id} dispatch={dispatch} />
+              <OptionDialog
+                listId={id}
+                taskActions={taskActions}
+                listActions={listActions}
+              />
             </Box>
           </Flex>
           {/* {!taskArrayLength && ( */}

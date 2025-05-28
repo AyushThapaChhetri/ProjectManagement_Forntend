@@ -15,6 +15,7 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaFlipboard } from "react-icons/fa6";
 
 import F from "@/assets/F.png";
+import { IoAddSharp } from "react-icons/io5";
 
 // Define the props interface
 interface DrawerSideBarProps {
@@ -65,37 +66,82 @@ const DrawerSideBar = ({
               top="2"
               right="2"
             />
-            <Flex direction="column" w="100%" h="100%" bg={"none"} gap={20}>
-              <Flex gap={2} borderBottomWidth="2px" h="50px">
+            <Flex direction="column" w="100%" h="100%" bg={"none"} gap={5}>
+              <Flex
+                gap={2}
+                // justifyContent={"center"}
+                alignItems={"center"}
+                borderBottomWidth="2px"
+                borderColor="gray"
+                h="50px"
+              >
                 <Avatar.Root
                   shape="rounded"
-                  size={{ base: "sm", ultraHd: "lg" }}
+                  size={{ base: "2xs", ultraHd: "md" }}
                 >
                   <Avatar.Fallback name="F" />
                   <Avatar.Image src={F} />
                 </Avatar.Root>
-                <Text fontFamily="sans-serif" fontSize="24px">
+                <Text
+                  fontFamily="sans-serif"
+                  fontSize={{
+                    base: "12px",
+                    mobileLg: "14px",
+                    tablet: "16px",
+                    ultraHd: "20px",
+                  }}
+                >
                   Focus Workspace
                 </Text>
               </Flex>
               <Link href="/board">
                 <Flex
                   gap={5}
-                  justify="flex-start"
+                  // justify="flex-start"
+                  // justify="center"
+                  alignItems={"center"}
                   // bg={"red"}
                 >
-                  <Icon size="lg">
+                  <Icon
+                    size={{
+                      base: "xs",
+                      mobileLg: "sm",
+
+                      ultraHd: "lg",
+                    }}
+                  >
                     <FaFlipboard />
                   </Icon>
                   <Text
                     fontFamily="sans-serif"
-                    fontSize="18px"
+                    fontSize={{ base: "13px", wide: "16px" }}
                     // pt="2.5px"
                   >
                     Boards
                   </Text>
                 </Flex>
               </Link>
+              <Flex
+                borderBottomWidth="2px"
+                borderColor="gray"
+                justify="space-between"
+              >
+                <Text
+                  fontFamily="sans-serif"
+                  fontSize={{ base: "14px", wide: "17px" }}
+                  // pt="2.5px"
+                >
+                  Projects
+                </Text>
+                <Icon
+                  size={{
+                    base: "xs",
+                    mobileLg: "lg",
+                  }}
+                >
+                  <IoAddSharp />
+                </Icon>
+              </Flex>
             </Flex>
             {/* <p>Drawer content goes here.</p> */}
           </Box>

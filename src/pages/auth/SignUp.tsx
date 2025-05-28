@@ -20,37 +20,36 @@ import {
   useForm,
   // type Resolver,
 } from "react-hook-form";
-// import { yupResolver } from "@hookform/resolvers/yup";
+
 import background from "@/assets/swayambu.png";
-import { signUpSchema } from "@/schemas/SignUpSchema";
 import { RadioGroup } from "@chakra-ui/react";
-import type { InferType } from "yup";
 // import { useState } from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import axios from "axios";
 import api from "@/api/Api";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-type FormValues = InferType<typeof signUpSchema>;
+// import { signUpSchema } from "@/schemas/SignUpSchema";
+// import type { InferType } from "yup";
+// import { yupResolver } from "@hookform/resolvers/yup";
+// type FormValues = InferType<typeof signUpSchema>;
 
-// Explicitly define our FormValues type, making sure optionality is correct
-// interface FormValues extends FormValuesFromSchema {}
-// interface FormValues {
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   password: string;
-//   confirmPassword: string;
-//   gender: "male" | "female" | "other";
-//   dob: Date;
-//   address?: string;
-//   phone?: string;
-//   title?: string;
-// }
+// 1) Define your form’s TypeScript type (matching what you expect to POST)
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  gender: "male" | "female" | "other";
+  dob: Date; // because you send ISO string
+  address?: string;
+  phone?: string;
+  title?: string;
+};
 
 const items = [
   { label: "Male", value: "male" },
@@ -71,16 +70,13 @@ const SignUp = () => {
     control,
     register,
     handleSubmit,
+    setError,
     formState: { errors },
     reset,
-    // } = useForm<FormValues>();
-  } = useForm({
-    resolver: yupResolver(signUpSchema),
-  });
-  // } = useForm<FormValues>({
+  } = useForm<FormValues>();
+  // } = useForm({
   //   resolver: yupResolver(signUpSchema),
   // });
-  // } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const finalData = {
@@ -88,16 +84,8 @@ const SignUp = () => {
       dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     };
     console.log(finalData); // or send it to the API
-    reset();
+    // reset();
     try {
-      // const response = await axios.post("http://localhost:5000/api/signup", values, {
-      // await axios.post("http://localhost:5000/api/user/signup",
-      //   finalData, {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
       await api.post("/user/signup", finalData, {
         headers: {
           "Content-Type": "application/json",
@@ -105,22 +93,34 @@ const SignUp = () => {
       });
       // console.log("Signup Success:", response.data);
       toast.success("Registered Successfully");
-      reset();
 
-      // Optional: Add success handling
-      // alert("Signup successful!");
-      // redirect to another page if needed
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(
-          `${
-            error.response?.data?.message ||
-            error.response?.data ||
-            error.message
-          }`
+      reset();
+      // } catch (error) {
+      // if (axios.isAxiosError(error)) {
+      // toast.error(
+      //   `${
+      //     error.response?.data?.message ||
+      //     error.response?.data ||
+      //     error.message
+      //   }`
+      // );
+
+      // }
+    } catch (err) {
+      if (
+        axios.isAxiosError(err) &&
+        Array.isArray(err.response?.data?.errors)
+      ) {
+        err.response!.data.errors.forEach(
+          (e: { field: string; message: string }) => {
+            setError(e.field as keyof FormValues, {
+              type: "server",
+              message: e.message,
+            });
+          }
         );
-      } else if (error instanceof Error) {
-        console.log(error.message);
+      } else if (err instanceof Error) {
+        console.log(err.message);
       } else {
         console.log("Unknown error occurred");
       }
@@ -133,9 +133,6 @@ const SignUp = () => {
         height={
           isShortScreen ? { mobile: "100vh" } : { base: "auto", ultra: "100vh" }
         }
-        // height={{ base: "100vh", wide: "auto", ultra: "100vh" }}
-        // height={{ base: "100%" }}
-        // height={{ ultra: "100vh" }}
         width={{ base: "100%" }}
         bg="cyan.50"
         overflowX="hidden"
@@ -186,22 +183,16 @@ const SignUp = () => {
                 </Card.Description>
               </Card.Header>
               <Card.Body pt={0}>
-                <Stack
-                  // spaceY="10px"
-                  gap="5"
-                  // height="100%"
-                  // maxH={{ base: "60vh", md: "none" }}
-                  // overflowY="auto"
-                >
+                <Stack gap="5">
                   <HStack>
                     <Field.Root
                       invalid={!!errors.firstName}
                       width={{ base: "100%" }}
-                      required
+                      // required
                     >
                       <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                         First Name
-                        <Field.RequiredIndicator />
+                        {/* <Field.RequiredIndicator /> */}
                       </Field.Label>
                       <Input
                         placeholder="First Name"
@@ -216,11 +207,11 @@ const SignUp = () => {
                     <Field.Root
                       invalid={!!errors.lastName}
                       width={{ base: "100%" }}
-                      required
+                      // required
                     >
                       <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                         Last Name
-                        <Field.RequiredIndicator />
+                        {/* <Field.RequiredIndicator /> */}
                       </Field.Label>
                       <Input
                         placeholder="Last Name"
@@ -236,11 +227,11 @@ const SignUp = () => {
                   <Field.Root
                     invalid={!!errors.email}
                     width={{ base: "100%" }}
-                    required
+                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Email
-                      <Field.RequiredIndicator />
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Input
                       placeholder="me@example.com"
@@ -252,10 +243,13 @@ const SignUp = () => {
                       {errors.email?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                  <Field.Root invalid={!!errors.password} required>
+                  <Field.Root
+                    invalid={!!errors.password}
+                    // required
+                  >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Password
-                      <Field.RequiredIndicator />
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <PasswordInput
                       fontSize="16px"
@@ -266,10 +260,13 @@ const SignUp = () => {
                       {errors.password?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                  <Field.Root invalid={!!errors.confirmPassword} required>
+                  <Field.Root
+                    invalid={!!errors.confirmPassword}
+                    // required
+                  >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Confirm Password
-                      <Field.RequiredIndicator />
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <PasswordInput
                       fontSize="16px"
@@ -323,11 +320,11 @@ const SignUp = () => {
                   <Field.Root
                     invalid={!!errors.dob}
                     width={{ base: "100%" }}
-                    required
+                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Dob
-                      <Field.RequiredIndicator />
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Controller
                       name="dob"

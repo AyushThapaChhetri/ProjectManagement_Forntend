@@ -32,7 +32,7 @@ const BoardView = () => {
     name: "",
   });
 
-  const { state, onDrop, dispatch } = useTaskContext();
+  const { state, listActions, onDrop } = useTaskContext();
 
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -76,7 +76,7 @@ const BoardView = () => {
       console.log("Input is empty. Submission prevented.");
       return;
     } else {
-      ListApi.createList(listName.name, dispatch);
+      ListApi.createList(listName.name, listActions);
 
       setShowAddListForm(false);
       setListName({ name: "" });
@@ -90,7 +90,14 @@ const BoardView = () => {
     }
   };
   const sidebarRef = useRef(null);
-  const responsiveWidthOpen = useBreakpointValue({ base: "60vw", md: "20vw" });
+  // const responsiveWidthOpen = useBreakpointValue({ base: "60vw", md: "20vw" });
+  const responsiveWidthOpen = useBreakpointValue({
+    base: "60vw",
+    mobileLg: "50vw",
+    tabletSm: "40vw",
+    tabletLg: "30vw",
+    laptopSm: "20vw",
+  });
   const responsiveWidthClose = useBreakpointValue({ base: "10vw", md: "3vw" });
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
   return (

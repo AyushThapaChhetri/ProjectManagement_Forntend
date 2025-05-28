@@ -25,9 +25,8 @@ interface SubTaskCardsProps {
 const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
   const [showCheckBox, setShowCheckBox] = useState(false);
   const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
-  // const [activeTask, setActiveTask] = useState<string | null>(null);
 
-  const { dispatch, setActiveList, setActiveTask } = useTaskContext();
+  const { taskActions, selectList, selectTask } = useTaskContext();
   // console.log("State: ", state);
 
   const [formData, setFormData] = useState({
@@ -82,55 +81,25 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
   const handleSubmit = () => {
     const trimmed = formData.taskTitle.trim();
     if (trimmed === "") {
-      // dispatch({ type: "DELETE_TASK", payload: { id: task.id } });
-      TaskApi.deleteTask(task.id, dispatch);
+      TaskApi.deleteTask(task.id, taskActions);
     } else {
-      // dispatch({
-      //   type: "UPDATE_TASK",
-      //   payload: {
-      //     id: task.id,
-      //     updates: { name: trimmed, isEditing: false },
-      //   },
-      // });
-
-      TaskApi.updateTask(
+      TaskApi.editTask(
         task.id,
         {
           name: trimmed,
           updatedAt: new Date(Date.now()).toISOString(),
           isEditing: false,
         },
-        dispatch
+        taskActions
       );
 
-      TaskApi.createTask(listId, dispatch);
-      // dispatch({
-      //   type: "ADD_TASK",
-      //   payload: {
-      //     id: `temp-${Date.now()}`,
-      //     listId: listId,
-      //     uid: "",
-      //     projectId: 1,
-      //     name: "",
-      //     priority: "low",
-      //     status: "todo",
-      //     createdAt: "",
-      //     updatedAt: "",
-      //     isEditing: true,
-      //   },
-      // });
+      TaskApi.createTask(listId, taskActions);
     }
   };
 
   const handleDelete = () => {
     // console.log("Delete id: ", task.id);
-    TaskApi.deleteTask(task.id, dispatch);
-    // dispatch({
-    //   type: "DELETE_TASK",
-    //   payload: {
-    //     id: task.id,
-    //   },
-    // });
+    TaskApi.deleteTask(task.id, taskActions);
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -170,10 +139,8 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
         position="relative"
         flexShrink={0}
         onMouseEnter={() => {
-          // () => setShowCheckBox(true)
           setShowCheckBox(true);
         }}
-        // onMouseLeave={() => setShowCheckBox(false)}
         onMouseLeave={() => {
           // console.log("Task DialogOpen", isTaskEditDialogOpen);
           //false vayo vane execute garcha
@@ -262,14 +229,13 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
             lineHeight="1.4"
             // overflowY={"auto"}
             draggable
-            // onDragStart={() => setActiveTask(task.id)}
             onDragStart={(e) => {
               e.stopPropagation();
               e.dataTransfer.setData("text/plain", task.id); // required for browser drag
-              setActiveList(null); // clear any list drag
-              setActiveTask(task.id);
+              selectList(null);
+              selectTask(task.id);
             }}
-            onDragEnd={() => setActiveTask(null)}
+            onDragEnd={() => selectTask(null)}
           >
             {task.name}
           </Text>

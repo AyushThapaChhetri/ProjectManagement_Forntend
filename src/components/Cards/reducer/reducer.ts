@@ -116,3 +116,6 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
       return state;
   }
 };
+
+// case "RESET_STATE":
+//   return initialState;
