@@ -93,7 +93,7 @@ const BoardView = () => {
   // const responsiveWidthOpen = useBreakpointValue({ base: "60vw", md: "20vw" });
   const responsiveWidthOpen = useBreakpointValue({
     base: "60vw",
-    mobileLg: "50vw",
+    // mobileLg: "50vw",
     tabletSm: "40vw",
     tabletLg: "30vw",
     laptopSm: "20vw",

@@ -6,13 +6,13 @@ import {
 } from "@/components/Cards/reducer/task.types";
 import * as yup from "yup";
 
-const optionalTrimmedString = () =>
+export const optionalTrimmedString = () =>
   yup
     .string()
     .trim()
     .transform((value) => (value === "" ? undefined : value))
     .optional();
-const optionalTrimmedNumber = () =>
+export const optionalTrimmedNumber = () =>
   yup
     .number()
     .transform((value, originalValue) =>

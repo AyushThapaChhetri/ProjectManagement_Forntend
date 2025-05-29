@@ -5,13 +5,13 @@ import App from "./App.tsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import { Provider } from "./components/ui/provider.tsx";
 import { BrowserRouter } from "react-router";
-import { TaskProvider } from "./components/Cards/context/TaskProvider.tsx";
+import AppProvider from "./provider/AppProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider>
       <BrowserRouter>
-        <TaskProvider>
+        <AppProvider>
           <App />
           {/* <Route path="/" element={<App />} /> */}
           <ToastContainer
@@ -27,7 +27,7 @@ createRoot(document.getElementById("root")!).render(
             theme="colored"
             transition={Bounce}
           />
-        </TaskProvider>
+        </AppProvider>
       </BrowserRouter>
     </Provider>
   </StrictMode>

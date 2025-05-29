@@ -115,3 +115,35 @@
   input:-webkit-autofill::first-line {
   font-size: 12px;
 }
+
+/* Base style for DatePicker input in ProjectPopover */
+/* Make wrapper div full width */
+.project-popover-datepicker-wrapper .react-datepicker-wrapper {
+  width: 100%;
+}
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input::placeholder {
+  font-size: 14px; /* increase placeholder font size */
+  /* color: var(--chakra-colors-gray-400); optional: match Chakra placeholder color */
+}
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input.chakra-input-project-popover {
+  width: 100%;
+  border: 1px solid var(--chakra-colors-gray-200);
+  border-radius: var(--chakra-radii-md);
+  padding: var(--chakra-space-2) var(--chakra-space-4);
+  text-align: center;
+  font-size: 16px;
+  height: var(--chakra-sizes-10);
+  background: var(--chakra-colors-white);
+}
+
+/* Error state for ProjectPopover DatePicker */
+.react-datepicker-wrapper
+  .react-datepicker__input-container
+  input.chakra-input-project-popover.input-error {
+  border: 0.2px solid var(--chakra-colors-red-500);
+  box-shadow: 0 0 0 0.2px var(--chakra-colors-red-500);
+}

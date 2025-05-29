@@ -9,13 +9,16 @@ import {
   Text,
   Link,
 } from "@chakra-ui/react";
-import type { RefObject } from "react";
+import { type RefObject } from "react";
 // import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaFlipboard } from "react-icons/fa6";
 
 import F from "@/assets/F.png";
-import { IoAddSharp } from "react-icons/io5";
+import ProjectAddPopover from "../popover/ProjectAddPopover";
+import SideBarProject from "./SideBarProject";
+import { useProjectContext } from "@/hooks/userProjectContext";
+import type { Project } from "../Cards/reducer/project.type";
 
 // Define the props interface
 interface DrawerSideBarProps {
@@ -29,6 +32,8 @@ const DrawerSideBar = ({
   onToggle,
   containerRef,
 }: DrawerSideBarProps) => {
+  const { state, projectActions } = useProjectContext();
+
   return (
     <>
       {!isOpen && (
@@ -36,9 +41,6 @@ const DrawerSideBar = ({
           aria-label={isOpen ? "Close drawer" : "Open drawer"}
           onClick={onToggle}
           position="absolute"
-          // top="50%"
-          // left="50%"
-          // transform="translate(-50%, -50%)"
           top="5px"
           right="-15px"
           zIndex="1"
@@ -66,7 +68,14 @@ const DrawerSideBar = ({
               top="2"
               right="2"
             />
-            <Flex direction="column" w="100%" h="100%" bg={"none"} gap={5}>
+            <Flex
+              direction="column"
+              w="100%"
+              h="100%"
+              bg={"none"}
+              // bg={"green"}
+              gap={5}
+            >
               <Flex
                 gap={2}
                 // justifyContent={"center"}
@@ -97,8 +106,6 @@ const DrawerSideBar = ({
               <Link href="/board">
                 <Flex
                   gap={5}
-                  // justify="flex-start"
-                  // justify="center"
                   alignItems={"center"}
                   // bg={"red"}
                 >
@@ -122,25 +129,61 @@ const DrawerSideBar = ({
                 </Flex>
               </Link>
               <Flex
-                borderBottomWidth="2px"
-                borderColor="gray"
-                justify="space-between"
+                direction="column"
+                flexGrow="1"
+                // gap={1}
+                // border="1px solid grey"
+                maxH={{ wide: "75%", ultraHd: "80%" }}
               >
-                <Text
-                  fontFamily="sans-serif"
-                  fontSize={{ base: "14px", wide: "17px" }}
-                  // pt="2.5px"
+                <Flex
+                  borderBottomWidth="2px"
+                  borderColor="gray"
+                  justify="space-between"
                 >
-                  Projects
-                </Text>
-                <Icon
-                  size={{
-                    base: "xs",
-                    mobileLg: "lg",
+                  <Text
+                    fontFamily="sans-serif"
+                    fontSize={{ base: "14px", wide: "17px" }}
+                    // pt="2.5px"
+                  >
+                    Projects
+                  </Text>
+
+                  <ProjectAddPopover />
+                </Flex>
+                <Flex
+                  direction="column"
+                  flexGrow="1"
+                  pt="8px"
+                  gap={2}
+                  overflowY="auto"
+                  css={{
+                    "&::-webkit-scrollbar": {
+                      width: "8px", // <-- change width here
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: "#888", // color of the scrollbar thumb
+                      borderRadius: "8px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      background: "#555", // on hover
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "#f1f1f1", // background of scrollbar
+                    },
                   }}
+                  // border="1px solid grey"
                 >
-                  <IoAddSharp />
-                </Icon>
+                  {state?.projects?.map((project: Project) => {
+                    return (
+                      <SideBarProject
+                        key={project.id}
+                        project={project}
+                        projectActions={projectActions}
+                        selectedProjectId={state.selectedProjectId}
+                      />
+                    );
+                  })}
+                </Flex>
               </Flex>
             </Flex>
             {/* <p>Drawer content goes here.</p> */}
