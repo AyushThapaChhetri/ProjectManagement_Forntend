@@ -2,13 +2,17 @@ import type { TaskContextType } from "@/components/Cards/context/TaskContext";
 
 type listActions = TaskContextType["listActions"];
 const ListApi = {
-  async createList(listName: string, listActions: listActions) {
+  async createList(
+    listName: string,
+    projectId: string,
+    listActions: listActions
+  ) {
     // console.log("Creation of list");
     const newList = {
       id: `temp-${Date.now()}`,
       uid: "",
       name: listName,
-      projectId: 1,
+      projectId: projectId,
       createdAt: "",
       updatedAt: "",
       isEditing: true,
@@ -24,6 +28,9 @@ const ListApi = {
   },
   async deleteList(listId: string, listActions: listActions) {
     listActions.deleteList(listId);
+  },
+  async deleteProjectList(projectId: string, listActions: listActions) {
+    listActions.deleteProjectList(projectId);
   },
   // async (){
 

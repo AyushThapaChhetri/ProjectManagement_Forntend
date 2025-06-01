@@ -27,7 +27,8 @@ interface CardsProps {
   tasks: Task[]; // New prop
   draggable?: boolean;
   innerRef?: React.Ref<HTMLDivElement>;
-  onDragStartCallback: (cardId: string, height: number) => void; // NEW: Callback for drag start
+  projectId: string;
+  onDragStartCallback: (height: number) => void; // NEW: Callback for drag start
   onDragEndCallback: (cardId: string) => void; // NEW: Callback for drag end
 }
 
@@ -38,6 +39,7 @@ const Cards = React.memo(
     tasks,
     draggable,
     innerRef,
+    projectId,
     onDragStartCallback,
     onDragEndCallback,
   }: CardsProps) => {
@@ -63,7 +65,7 @@ const Cards = React.memo(
     // console.log("Current state in Cards component:", state);
 
     const handleAddTask = () => {
-      TaskApi.createTask(id, taskActions);
+      TaskApi.createTask(id, projectId, taskActions);
     };
     // Filter tasks to only show those belonging to this specific list
     const listTasks = tasks.filter((task) => task.listId === id);
@@ -77,21 +79,19 @@ const Cards = React.memo(
       resolver: yupResolver(listSchema),
     });
     const onSubmit: SubmitHandler<FormValues> = (data) => {
-      console.log("Form is submitting..."); // This should log
-      console.log(data.name); // Your final form data
+      // console.log("Form is submitting..."); // This should log
+      // console.log(data.name); // Your final form data
       ListApi.updateList(id, data.name, listActions);
       // reset();
     };
-    // const taskArrayLength = listTasks.length === 0;
-    //
-    // console.log("Errors from RHF", errors);
+
     return (
       <>
         <Flex
           ref={setCombinedRef}
           direction="column"
           h="fit-content"
-          maxH="100%"
+          maxH="96%"
           draggable={draggable}
           onDragStart={(e) => {
             e.dataTransfer.setData("text/plain", id); // “kickstart” native drag
@@ -99,11 +99,14 @@ const Cards = React.memo(
             selectList(id);
             // NEW: Get height from localCardRef and call the callback
             if (localCardRef.current) {
-              onDragStartCallback(id, localCardRef.current.offsetHeight);
+              // onDragStartCallback(id, localCardRef.current.offsetHeight);
+              onDragStartCallback(localCardRef.current.offsetHeight);
             }
+            console.log("Drag started for list:", id);
           }}
           onDragEnd={() => {
-            selectList(null);
+            console.log("Drag ended for list:", id);
+            // selectList(null);
             // NEW: Call the drag end callback
             onDragEndCallback(id);
           }}
@@ -118,7 +121,6 @@ const Cards = React.memo(
           boxSizing="border-box"
           flexShrink="0"
           // gap={2}
-
           // flexShrink={1}
         >
           <Flex alignItems="center" userSelect="none" justify={"space-between"}>
@@ -193,10 +195,17 @@ const Cards = React.memo(
             {/* Drop area at the very top of an empty list  */}
 
             <TaskDropArea listId={id} position={0} onDrop={onDrop} />
+
+            {/* <TaskDropArea listId={id} position={0} onDrop={onDrop} /> */}
             {listTasks.length > 0 &&
               listTasks?.map((task: Task, i) => (
                 <React.Fragment key={task.id}>
-                  <SubTaskCards task={task} listId={id} listName={name} />
+                  <SubTaskCards
+                    task={task}
+                    projectId={projectId}
+                    listId={id}
+                    listName={name}
+                  />
                   <TaskDropArea
                     listId={id}
                     position={i + 1}

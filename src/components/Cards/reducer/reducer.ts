@@ -59,6 +59,15 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
       };
     }
 
+    case "DELETE_PROJECT_LIST": {
+      const { pId } = action.payload;
+      return {
+        ...state,
+        tasks: state?.tasks?.filter((t) => t.projectId !== pId),
+        lists: state?.lists?.filter((l) => l.projectId !== pId),
+      };
+    }
+
     // case "SET_TASKS":
     //   return { ...state, tasks: action.payload };
     case "ADD_TASK":

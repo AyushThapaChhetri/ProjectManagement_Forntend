@@ -18,10 +18,12 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const selectTask = (taskId: string | null) => {
     setActiveTask(taskId);
   };
+  // console.log("From Provider:", activeTask);
 
   const selectList = (listId: string | null) => {
     setActiveList(listId);
   };
+  // console.log("From Provider:", activeList);
 
   const addTask = (newTask: Task) => {
     dispatch({ type: "ADD_TASK", payload: newTask });
@@ -49,6 +51,9 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const deleteList = (listId: string) => {
     dispatch({ type: "DELETE_LIST", payload: { id: listId } });
   };
+  const deleteProjectList = (projectId: string) => {
+    dispatch({ type: "DELETE_PROJECT_LIST", payload: { pId: projectId } });
+  };
 
   // const clearState = () => {
   //   dispatch({ type: "RESET_STATE" });
@@ -58,32 +63,62 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     // console.log(
     //   `${activeTask} is going to place into ${listId} and at the postion ${position}`
     // );
-    console.log(
-      `${activeList} list is going to place into   at the postion ${position}`
-    );
+    // console.log(
+    //   `${activeList} list is going to place into   at the postion ${position}`
+    // );
 
-    // First check if we're dropping a list
-    if (activeList) {
-      dispatch({
-        type: "MOVE_LIST",
-        payload: { listId: activeList, position },
-      });
+    // // First check if we're dropping a list
+    // if (activeList) {
+    //   dispatch({
+    //     type: "MOVE_LIST",
+    //     payload: { listId: activeList, position },
+    //   });
+    //   setActiveList(null);
+    //   return;
+    // }
+
+    // // Then check if it's a task
+    // if (activeTask && listId) {
+    //   dispatch({
+    //     type: "MOVE_TASK",
+    //     payload: {
+    //       id: activeTask,
+    //       listId,
+    //       position,
+    //     },
+    //   });
+    //   setActiveTask(null);
+    //   return;
+    // }
+    // console.log(`onDrop called with position: ${position}, listId: ${listId}`);
+    // console.log(`ActiveTask: ${activeTask}, ActiveList: ${activeList}`);
+    try {
+      // First check if we're dropping a list
+      if (activeList) {
+        dispatch({
+          type: "MOVE_LIST",
+          payload: { listId: activeList, position },
+        });
+        // Moved setActiveList to dragend callback
+        return;
+      }
+
+      if (activeTask && listId) {
+        dispatch({
+          type: "MOVE_TASK",
+          payload: {
+            id: activeTask,
+            listId,
+            position,
+          },
+        });
+        // Moved setActiveTask to dragend callback
+        return;
+      }
+    } finally {
+      // Always reset active states after drop
       setActiveList(null);
-      return;
-    }
-
-    // Then check if it's a task
-    if (activeTask && listId) {
-      dispatch({
-        type: "MOVE_TASK",
-        payload: {
-          id: activeTask,
-          listId,
-          position,
-        },
-      });
       setActiveTask(null);
-      return;
     }
   };
   useEffect(() => {
@@ -126,6 +161,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
           addList,
           updateList,
           deleteList,
+          deleteProjectList,
         },
       }}
     >

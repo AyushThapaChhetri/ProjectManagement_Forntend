@@ -17,6 +17,11 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     console.log("project id from provider", projectId);
     dispatch({ type: "SELECT_PROJECT", payload: { id: projectId } });
   };
+
+  const deselectProject = () => {
+    console.log("deselect project");
+    dispatch({ type: "DESELECT_PROJECT" });
+  };
   const addProject = (newProject: Project) => {
     // console.log("Project from the Provider: ", newProject);
     dispatch({ type: "ADD_PROJECT", payload: newProject });
@@ -51,6 +56,7 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
           addProject,
           updateProject,
           deleteProject,
+          deselectProject,
         },
       }}
     >

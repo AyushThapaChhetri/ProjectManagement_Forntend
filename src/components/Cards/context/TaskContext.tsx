@@ -22,6 +22,7 @@ export interface TaskContextType {
     addList: (newList: List) => void;
     updateList: (listId: string, list: Partial<List>) => void;
     deleteList: (listId: string) => void;
+    deleteProjectList: (projectId: string) => void;
   };
   onDrop: (position: number, listId?: string) => void;
 }

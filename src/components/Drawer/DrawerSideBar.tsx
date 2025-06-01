@@ -7,33 +7,50 @@ import {
   IconButton,
   Portal,
   Text,
-  Link,
 } from "@chakra-ui/react";
-import { type RefObject } from "react";
-// import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
+import React, { type RefObject } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { FaFlipboard } from "react-icons/fa6";
 
 import F from "@/assets/F.png";
 import ProjectAddPopover from "../popover/ProjectAddPopover";
 import SideBarProject from "./SideBarProject";
-import { useProjectContext } from "@/hooks/userProjectContext";
+import { Link, useLocation, useNavigate } from "react-router";
 import type { Project } from "../Cards/reducer/project.type";
+import { useProjectContext } from "@/hooks/userProjectContext";
+// import { useProjectContext } from "@/hooks/userProjectContext";
+// import type { Project } from "../Cards/reducer/project.type";
+// import { ProjectApi } from "@/api/ProjectApi";
 
 // Define the props interface
 interface DrawerSideBarProps {
   isOpen: boolean; // Whether the drawer is open
   onToggle: () => void; // Function to toggle the drawer state
   containerRef: RefObject<HTMLDivElement | null>; // Ref to the container element
+  // setBoard: React.Dispatch<React.SetStateAction<boolean>>;
+  onSelectBoard: () => void;
 }
 
 const DrawerSideBar = ({
   isOpen,
   onToggle,
   containerRef,
+  // onSelectBoard,
+  // setBoard,
 }: DrawerSideBarProps) => {
-  const { state, projectActions } = useProjectContext();
+  // const { state, projectActions } = useProjectContext();
 
+  // const handleDeselectProject = () => {
+  //   console.log("deselect from drawersidebar");
+  //   ProjectApi.deselectProject(projectActions);
+  //   setBoard(true);
+  // };
+  const { state } = useProjectContext();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  // is the “Boards” link active?
+  const boardsActive = pathname === "/body";
   return (
     <>
       {!isOpen && (
@@ -94,8 +111,8 @@ const DrawerSideBar = ({
                 <Text
                   fontFamily="sans-serif"
                   fontSize={{
-                    base: "12px",
-                    mobileLg: "14px",
+                    base: "14px",
+                    // mobileLg: "14px",
                     tablet: "16px",
                     ultraHd: "20px",
                   }}
@@ -103,17 +120,23 @@ const DrawerSideBar = ({
                   Focus Workspace
                 </Text>
               </Flex>
-              <Link href="/board">
+              <Link to="/body">
                 <Flex
                   gap={5}
                   alignItems={"center"}
+                  rounded="md"
+                  ml="5px"
+                  py="6px"
+                  px="20px"
+                  bg={boardsActive ? "gray.300" : "transparent"}
+
                   // bg={"red"}
                 >
                   <Icon
                     size={{
                       base: "xs",
                       mobileLg: "sm",
-
+                      wide: "md",
                       ultraHd: "lg",
                     }}
                   >
@@ -121,7 +144,8 @@ const DrawerSideBar = ({
                   </Icon>
                   <Text
                     fontFamily="sans-serif"
-                    fontSize={{ base: "13px", wide: "16px" }}
+                    fontSize={{ base: "14px", wide: "16px" }}
+                    // fontSize={{ base: "13px", wide: "16px" }}
                     // pt="2.5px"
                   >
                     Boards
@@ -173,7 +197,7 @@ const DrawerSideBar = ({
                   }}
                   // border="1px solid grey"
                 >
-                  {state?.projects?.map((project: Project) => {
+                  {/* {state?.projects?.map((project: Project) => {
                     return (
                       <SideBarProject
                         key={project.id}
@@ -181,6 +205,46 @@ const DrawerSideBar = ({
                         projectActions={projectActions}
                         selectedProjectId={state.selectedProjectId}
                       />
+                    );
+                  })} */}
+                  {state?.projects?.map((project: Project) => {
+                    const projectPath = `/body/project/${project.id}`;
+                    const isActive = pathname === projectPath;
+
+                    return (
+                      <React.Fragment key={project.id}>
+                        <Flex
+                          align="center"
+                          rounded="md"
+                          ml="10px"
+                          py={"5px"}
+                          px="20px"
+                          bg={isActive ? "gray.300" : "transparent"}
+                          _hover={{
+                            bg: "gray.300",
+                          }}
+                          cursor="pointer"
+                          caretColor="transparent"
+                          onClick={() =>
+                            navigate(`/body/project/${project.id}`)
+                          }
+                        >
+                          <Flex flexGrow={1}>
+                            <Box>
+                              <Text fontSize={{ base: "14px", wide: "17px" }}>
+                                {project.name}
+                              </Text>
+                            </Box>
+                          </Flex>
+                          <Box
+                            onClick={(e) => {
+                              e.stopPropagation(); // prevent navigation
+                            }}
+                          >
+                            <SideBarProject project={project} />
+                          </Box>
+                        </Flex>
+                      </React.Fragment>
                     );
                   })}
                 </Flex>

@@ -35,4 +35,7 @@ export type ProjectAction =
   | {
       type: "SELECT_PROJECT";
       payload: { id: string };
+    }
+  | {
+      type: "DESELECT_PROJECT";
     };

@@ -8,6 +8,7 @@ export interface ProjectContextType {
     addProject: (newProject: Project) => void;
     updateProject: (projectId: string, updateProject: Partial<Project>) => void;
     deleteProject: (projectId: string) => void;
+    deselectProject: () => void;
   };
 }
 export const ProjectContext = createContext<ProjectContextType | undefined>(

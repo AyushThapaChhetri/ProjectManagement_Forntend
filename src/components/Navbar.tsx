@@ -62,10 +62,7 @@ const Navbar = () => {
         align="center"
         px={{ base: "6", wide: "20" }}
         py={3}
-        // boxShadow="sm"
         h={{ base: "5rem", wide: "4rem" }}
-        // h="20vh"
-        // bg={"red"}
         borderWidth="1px"
         width="100%"
         // overflow="auto"
@@ -83,7 +80,7 @@ const Navbar = () => {
           display={{ base: "none", tabletLg: "flex" }}
         >
           <Box cursor="pointer">
-            <Link href="/board">Boards</Link>
+            <Link href="/body">Workspace</Link>
           </Box>
           <Box cursor="pointer">About Us</Box>
           <Box cursor="pointer">Contact</Box>

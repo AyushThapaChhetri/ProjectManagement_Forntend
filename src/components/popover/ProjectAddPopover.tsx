@@ -36,7 +36,6 @@ type ProjectAddPopoverProps = {
   triggerElement?: React.ReactNode;
   setMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   setShowIcons?: React.Dispatch<React.SetStateAction<boolean>>;
-  // setShowIcons?: (visibility: boolean) => void;
 };
 
 const ProjectAddPopover = ({
@@ -73,15 +72,6 @@ const ProjectAddPopover = ({
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    // console.log(data);
-    // const finalData = {
-    //   ...data,
-    //   createdAt: new Date(Date.now()).toISOString(),
-    //   updatedAt: new Date(Date.now()).toISOString(),
-
-    // };
-    // ProjectApi.createProject(data, projectActions);
-    // reset();
     if (onSubmitHandler) {
       onSubmitHandler(data);
       reset(data);
@@ -135,10 +125,7 @@ const ProjectAddPopover = ({
                       {errors.name?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                  {/* <Field.Root>
-                  <Field.Label>Height</Field.Label>
-                  <Input placeholder="32px" />
-                </Field.Root> */}
+
                   <Field.Root invalid={!!errors.description}>
                     <Field.Label>Description</Field.Label>
                     <Textarea
@@ -160,10 +147,7 @@ const ProjectAddPopover = ({
                     <Text as="h3" fontWeight="medium">
                       Deadline
                     </Text>
-                    {/* <DatePicker
-                                            selected={date.startDate}
-                                            onChange={(value) => handleDate("startDate", value)}
-                                          /> */}
+
                     <Controller
                       name="deadline"
                       control={control}

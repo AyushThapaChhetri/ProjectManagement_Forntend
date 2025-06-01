@@ -10,7 +10,18 @@ interface TaskDropAreaProps {
 
 const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
   const [showDrop, setShowDrop] = useState(false);
-  const { activeList } = useTaskContext();
+  const { activeList, activeTask } = useTaskContext();
+  // useEffect(() => {
+  //   console.log("active task ", activeTask);
+  //   console.log("active list ", activeList);
+  // }, [activeTask, activeList]);
+  // Only render when we are dragging a sub‐task (activeTask != null):
+  // if (activeTask === null) return null;
+  // if (!activeTask || activeList) return null;
+  // if (!activeTask || activeList !== null) return null;
+  // Only show when dragging a task
+  // if (!activeTask) return null;
+
   return (
     <Flex
       w="100%"
@@ -30,7 +41,11 @@ const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
         onDrop(position, listId); //  call your callback
         setShowDrop(false);
       }}
-      onDragOver={(e) => e.preventDefault()}
+      onDragOver={(e) => {
+        e.preventDefault();
+
+        // setShowDrop(true);
+      }}
     ></Flex>
   );
 };

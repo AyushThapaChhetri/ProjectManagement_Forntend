@@ -28,7 +28,7 @@ export interface List {
   id: string;
   uid: string;
   name: string;
-  projectId: number;
+  projectId: string;
   createdAt: string;
   updatedAt: string;
   isEditing: boolean;
@@ -38,7 +38,7 @@ export interface Task {
   id: string;
   listId: string;
   uid: string;
-  projectId: number;
+  projectId: string;
   name: string;
   description?: string;
   priority: Priority;
@@ -100,5 +100,6 @@ export type TaskAction =
   | { type: "ADD_LIST"; payload: List }
   | { type: "UPDATE_LIST"; payload: { id: string; updates: Partial<List> } }
   | { type: "DELETE_LIST"; payload: { id: string } }
-  | { type: "MOVE_LIST"; payload: { listId: string; position: number } };
+  | { type: "MOVE_LIST"; payload: { listId: string; position: number } }
+  | { type: "DELETE_PROJECT_LIST"; payload: { pId: string } };
 // | { type: "DELETE_LIST"; payload: string };

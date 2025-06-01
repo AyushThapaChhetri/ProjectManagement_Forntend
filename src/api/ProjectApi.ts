@@ -37,4 +37,7 @@ export const ProjectApi = {
   async deleteProject(projectId: string, projectActions: ProjectActions) {
     projectActions.deleteProject(projectId);
   },
+  async deselectProject(projectActions: ProjectActions) {
+    projectActions.deselectProject();
+  },
 };

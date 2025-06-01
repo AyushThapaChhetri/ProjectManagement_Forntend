@@ -20,9 +20,15 @@ interface SubTaskCardsProps {
   task: Task;
   listId: string;
   listName: string;
+  projectId: string;
 }
 
-const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
+const SubTaskCards = ({
+  task,
+  listId,
+  projectId,
+  listName,
+}: SubTaskCardsProps) => {
   const [showCheckBox, setShowCheckBox] = useState(false);
   const [isTaskEditDialogOpen, setIsTaskEditDialogOpen] = useState(false);
 
@@ -93,7 +99,7 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
         taskActions
       );
 
-      TaskApi.createTask(listId, taskActions);
+      TaskApi.createTask(listId, projectId, taskActions);
     }
   };
 
@@ -234,8 +240,14 @@ const SubTaskCards = ({ task, listId, listName }: SubTaskCardsProps) => {
               e.dataTransfer.setData("text/plain", task.id); // required for browser drag
               selectList(null);
               selectTask(task.id);
+              console.log("Drag started for task:", task.id);
             }}
-            onDragEnd={() => selectTask(null)}
+            onDragEnd={(e) => {
+              e.stopPropagation();
+
+              console.log("Drag ended for task:", task.id);
+              // selectTask(null);
+            }}
           >
             {task.name}
           </Text>

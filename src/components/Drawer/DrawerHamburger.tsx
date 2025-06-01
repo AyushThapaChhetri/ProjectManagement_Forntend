@@ -49,7 +49,7 @@ const DrawerHamburger = ({
                       borderBottom: "2px solid purple",
                     }}
                   >
-                    <Link href="/board">Boards</Link>
+                    <Link href="/body">Workspace</Link>
                     {/* Product */}
                   </Text>
                 </Box>

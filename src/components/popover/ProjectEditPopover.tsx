@@ -5,14 +5,15 @@ import type { Project } from "../Cards/reducer/project.type";
 import { ProjectApi } from "@/api/ProjectApi";
 import type { ProjectContextType } from "../Cards/context/ProjectContext";
 import { useState } from "react";
+import { useTaskContext } from "@/hooks/useTaskContext";
+// import TaskApi from "@/api/TaskApi";
+import ListApi from "@/api/ListApi";
+import { useNavigate } from "react-router";
 interface ProjectEditPopoverProps {
   showIcons: boolean;
   project: Project;
   projectActions: ProjectContextType["projectActions"];
   setShowIcons: React.Dispatch<React.SetStateAction<boolean>>;
-  // setShowIcons: (visibility: boolean) => void;
-  // setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  // menuOpen: boolean;
 }
 const ProjectEditPopover = ({
   showIcons,
@@ -21,7 +22,18 @@ const ProjectEditPopover = ({
   projectActions,
 }: ProjectEditPopoverProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [editOpen, setEditOpen] = useState(false);
+  const { listActions } = useTaskContext();
+  const navigate = useNavigate();
+  const handleDeleteProject = async () => {
+    try {
+      await ProjectApi.deleteProject(project.id, projectActions);
+      await ListApi.deleteProjectList(project.id, listActions);
+      navigate("/body");
+    } catch (error) {
+      console.error("Failed to delete project or list:", error);
+    }
+  };
+
   return (
     <>
       <Menu.Root
@@ -40,7 +52,9 @@ const ProjectEditPopover = ({
               bg: "gray.400",
             }}
             onClick={(e) => {
+              // e.preventDefault();
               e.stopPropagation();
+              console.log("Clicked From Edit button");
             }}
           >
             <HiOutlineDotsHorizontal />
@@ -59,7 +73,6 @@ const ProjectEditPopover = ({
                 }}
                 setShowIcons={setShowIcons}
                 onSubmitHandler={(data) => {
-                  // console.log("EDIT SUBMIT PAYLOAD:", project.id, data);
                   ProjectApi.updateProject(project.id, data, projectActions);
                   setMenuOpen(false);
                   setShowIcons(false);
@@ -80,9 +93,7 @@ const ProjectEditPopover = ({
                 value="delete"
                 color="fg.error"
                 _hover={{ bg: "bg.error", color: "fg.error" }}
-                onSelect={() => {
-                  ProjectApi.deleteProject(project.id, projectActions);
-                }}
+                onSelect={handleDeleteProject}
               >
                 Delete...
               </Menu.Item>

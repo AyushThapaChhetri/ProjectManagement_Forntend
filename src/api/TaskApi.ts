@@ -8,12 +8,16 @@ import type {
 type taskActions = TaskContextType["taskActions"];
 
 const TaskApi = {
-  async createTask(listId: string, taskActions: taskActions) {
+  async createTask(
+    listId: string,
+    projectId: string,
+    taskActions: taskActions
+  ) {
     const newTask: Task = {
       id: `temp-${Date.now()}`, // Temporary ID; replace with backend ID
       listId: listId,
       uid: "", // Generates a UUID
-      projectId: 1, // Example; adjust as needed
+      projectId: projectId, // Example; adjust as needed
       name: "",
       priority: "low",
       status: "todo",

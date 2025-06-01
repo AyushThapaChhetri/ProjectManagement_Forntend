@@ -63,10 +63,16 @@ export const projectReducer = (
     //     projects: projects,
     //   };
     // }
-    case "DELETE_PROJECT":
+    case "DELETE_PROJECT": {
       return {
         ...state,
         projects: state.projects?.filter((p) => p.id !== action.payload.id),
+      };
+    }
+    case "DESELECT_PROJECT":
+      return {
+        ...state,
+        selectedProjectId: null,
       };
     default:
       return state;
