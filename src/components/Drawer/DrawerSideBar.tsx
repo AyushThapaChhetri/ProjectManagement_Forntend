@@ -50,7 +50,11 @@ const DrawerSideBar = ({
   const navigate = useNavigate();
 
   // is the “Boards” link active?
-  const boardsActive = pathname === "/body";
+  // const boardsActive = pathname === "/body";
+  const isActive = (path: string) => {
+    console.log(path);
+    return pathname === path;
+  };
   return (
     <>
       {!isOpen && (
@@ -120,38 +124,72 @@ const DrawerSideBar = ({
                   Focus Workspace
                 </Text>
               </Flex>
-              <Link to="/body">
-                <Flex
-                  gap={5}
-                  alignItems={"center"}
-                  rounded="md"
-                  ml="5px"
-                  py="6px"
-                  px="20px"
-                  bg={boardsActive ? "gray.300" : "transparent"}
+              <Flex direction="column">
+                <Link to="/body">
+                  <Flex
+                    gap={3}
+                    alignItems={"center"}
+                    rounded="md"
+                    ml="5px"
+                    py="6px"
+                    px="20px"
+                    bg={isActive("/body") ? "gray.300" : "transparent"}
 
-                  // bg={"red"}
-                >
-                  <Icon
-                    size={{
-                      base: "xs",
-                      mobileLg: "sm",
-                      wide: "md",
-                      ultraHd: "lg",
-                    }}
+                    // bg={"red"}
                   >
-                    <FaFlipboard />
-                  </Icon>
-                  <Text
-                    fontFamily="sans-serif"
-                    fontSize={{ base: "14px", wide: "16px" }}
-                    // fontSize={{ base: "13px", wide: "16px" }}
-                    // pt="2.5px"
+                    <Icon
+                      size={{
+                        base: "xs",
+                        mobileLg: "sm",
+                        wide: "md",
+                        ultraHd: "lg",
+                      }}
+                    >
+                      <FaFlipboard />
+                    </Icon>
+                    <Text
+                      fontFamily="sans-serif"
+                      fontSize={{ base: "14px", wide: "16px" }}
+                      // fontSize={{ base: "13px", wide: "16px" }}
+                      // pt="2.5px"
+                    >
+                      Boards
+                    </Text>
+                  </Flex>
+                </Link>
+                <Link to="/body/users">
+                  <Flex
+                    gap={3}
+                    alignItems={"center"}
+                    rounded="md"
+                    ml="5px"
+                    py="6px"
+                    px="20px"
+                    bg={isActive("/body/users") ? "gray.300" : "transparent"}
+
+                    // bg={"red"}
                   >
-                    Boards
-                  </Text>
-                </Flex>
-              </Link>
+                    <Icon
+                      size={{
+                        base: "xs",
+                        mobileLg: "sm",
+                        wide: "md",
+                        ultraHd: "lg",
+                      }}
+                    >
+                      <FaFlipboard />
+                    </Icon>
+                    <Text
+                      fontFamily="sans-serif"
+                      fontSize={{ base: "14px", wide: "16px" }}
+                      // fontSize={{ base: "13px", wide: "16px" }}
+                      // pt="2.5px"
+                    >
+                      Users
+                    </Text>
+                  </Flex>
+                </Link>
+              </Flex>
               <Flex
                 direction="column"
                 flexGrow="1"
@@ -209,7 +247,7 @@ const DrawerSideBar = ({
                   })} */}
                   {state?.projects?.map((project: Project) => {
                     const projectPath = `/body/project/${project.id}`;
-                    const isActive = pathname === projectPath;
+                    // const isActive = pathname === projectPath;
 
                     return (
                       <React.Fragment key={project.id}>
@@ -219,7 +257,9 @@ const DrawerSideBar = ({
                           ml="10px"
                           py={"5px"}
                           px="20px"
-                          bg={isActive ? "gray.300" : "transparent"}
+                          bg={
+                            isActive(projectPath) ? "gray.300" : "transparent"
+                          }
                           _hover={{
                             bg: "gray.300",
                           }}

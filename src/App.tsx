@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css"; // Default styles first
 import "./styles/date-picker-overrides.css"; // Your overrides last to ensure they apply
 import Board from "./pages/board/Board";
 import ProjectWrapper from "./pages/project/ProjectWrapper";
+import User from "./pages/user/User";
 
 function App() {
   // return (
@@ -28,6 +29,7 @@ function App() {
       <Route path="body/*" element={<Body />}>
         {/* nested routes for the right‐pane */}
         <Route index element={<Board />} />
+        <Route path="users" element={<User />} />
         <Route path="project/:projectId" element={<ProjectWrapper />} />
       </Route>
     </Routes>
