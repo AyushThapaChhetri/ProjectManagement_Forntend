@@ -1,6 +1,7 @@
 import { InputWithKbd } from "@/components/ui/searchBar";
-import { Button, Flex, Heading, HStack } from "@chakra-ui/react";
+import { Flex, Heading, HStack } from "@chakra-ui/react";
 import { UserTable } from "./userTable";
+import AddUser from "./AddUser";
 
 const User = () => {
   return (
@@ -10,7 +11,9 @@ const User = () => {
         direction="column"
         // border="5px solid black"
         h="calc(100vh - 4rem)"
+        // bg="blue"
         gapY={3}
+        overflowY={{ base: "auto", tablet: "hidden" }}
         // h="100%"
       >
         <HStack
@@ -18,9 +21,10 @@ const User = () => {
           // justify="space-between"
         >
           <Heading size="3xl"> Users</Heading>
-          <Button bg={"purple"} size="xs">
+          {/* <Button bg={"purple"} size="xs" onClick={handleAddUsers}>
             Add Users
-          </Button>
+          </Button> */}
+          <AddUser mode="create" />
         </HStack>
         <Flex
           // border="10px solid red"
@@ -32,9 +36,16 @@ const User = () => {
         >
           <InputWithKbd width="250px" />
           <Flex
+            direction={"column"}
             // border="5px solid black"
             flexGrow="1"
-            minH={0}
+            // this prevents more datas inside table
+            minH={0} // Ensures it doesn’t overflow the parent
+            // maxH="95%"
+            w="100%" // Full width for the table
+            // bg="green"
+            // h="fit-content"
+            // h="500px"
           >
             <UserTable />
           </Flex>

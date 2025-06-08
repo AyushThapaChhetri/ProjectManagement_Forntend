@@ -18,6 +18,8 @@ import SideBarProject from "./SideBarProject";
 import { Link, useLocation, useNavigate } from "react-router";
 import type { Project } from "../Cards/reducer/project.type";
 import { useProjectContext } from "@/hooks/userProjectContext";
+import { FaUserAlt } from "react-icons/fa";
+
 // import { useProjectContext } from "@/hooks/userProjectContext";
 // import type { Project } from "../Cards/reducer/project.type";
 // import { ProjectApi } from "@/api/ProjectApi";
@@ -141,8 +143,8 @@ const DrawerSideBar = ({
                       size={{
                         base: "xs",
                         mobileLg: "sm",
-                        wide: "md",
-                        ultraHd: "lg",
+                        // wide: "md",
+                        ultraHd: "md",
                       }}
                     >
                       <FaFlipboard />
@@ -173,11 +175,11 @@ const DrawerSideBar = ({
                       size={{
                         base: "xs",
                         mobileLg: "sm",
-                        wide: "md",
-                        ultraHd: "lg",
+                        // wide: "md",
+                        ultraHd: "md",
                       }}
                     >
-                      <FaFlipboard />
+                      <FaUserAlt />
                     </Icon>
                     <Text
                       fontFamily="sans-serif"
@@ -204,7 +206,8 @@ const DrawerSideBar = ({
                 >
                   <Text
                     fontFamily="sans-serif"
-                    fontSize={{ base: "14px", wide: "17px" }}
+                    fontSize={{ base: "16px", wide: "18px" }}
+                    // color="white"
                     // pt="2.5px"
                   >
                     Projects

@@ -127,9 +127,9 @@ const Home = () => {
 
               <Flex gap={5} align="center">
                 <Avatar.Root
-                  // size={{ base: "sm", tablet: "xl", ultraHd: "2xl" }}
-                  w="auto"
-                  h="3.5rem"
+                  size={{ base: "sm", tablet: "xl", ultraHd: "2xl" }}
+                  // w="auto"
+                  // h="3.5rem"
                 >
                   <Avatar.Fallback name="Ayush Thapa" />
                   <Avatar.Image src={avatar1} />

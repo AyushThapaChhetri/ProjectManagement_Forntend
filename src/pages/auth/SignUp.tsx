@@ -1,30 +1,30 @@
 import {
   Box,
-  Button,
+  // Button,
   Card,
   Center,
-  Field,
+  // Field,
   Flex,
   Link,
-  Input,
-  Stack,
+  // Input,
+  // Stack,
   //   Text,
-  HStack,
-  Fieldset,
+  // HStack,
+  // Fieldset,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { PasswordInput } from "@/components/ui/password-input";
-import {
-  Controller,
-  type SubmitHandler,
-  useForm,
-  // type Resolver,
-} from "react-hook-form";
+// import { PasswordInput } from "@/components/ui/password-input";
+// import {
+// Controller,
+// type SubmitHandler,
+// useForm,
+// type Resolver,
+// } from "react-hook-form";
 
 import background from "@/assets/swayambu.png";
-import { RadioGroup } from "@chakra-ui/react";
+// import { RadioGroup } from "@chakra-ui/react";
 // import { useState } from "react";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
@@ -32,30 +32,37 @@ import axios from "axios";
 import api from "@/api/Api";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import UserForm from "@/components/form/UserForm";
+import type { FormValues } from "../user/userType";
 // import { signUpSchema } from "@/schemas/SignUpSchema";
 // import type { InferType } from "yup";
 // import { yupResolver } from "@hookform/resolvers/yup";
 // type FormValues = InferType<typeof signUpSchema>;
 
 // 1) Define your form’s TypeScript type (matching what you expect to POST)
-type FormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  gender: "male" | "female" | "other";
-  dob: Date; // because you send ISO string
-  address?: string;
-  phone?: string;
-  title?: string;
-};
+// type FormValues = {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   password: string;
+//   confirmPassword: string;
+//   gender: "male" | "female" | "other";
+//   dob: Date; // because you send ISO string
+//   address?: string;
+//   phone?: string;
+//   title?: string;
+// };
 
-const items = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-  { label: "Other", value: "other" },
-];
+// const items = [
+//   { label: "Male", value: "male" },
+//   { label: "Female", value: "female" },
+//   { label: "Other", value: "other" },
+// ];
+
+export type ApiError = {
+  field: string;
+  message: string;
+};
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -66,25 +73,24 @@ const SignUp = () => {
     }
   });
   const [isShortScreen] = useMediaQuery(["(min-height: 801px)"]);
-  const {
-    control,
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-    reset,
-  } = useForm<FormValues>();
-  // } = useForm({
-  //   resolver: yupResolver(signUpSchema),
-  // });
+  // const {
+  //   control,
+  //   register,
+  //   handleSubmit,
+  //   setError,
+  //   formState: { errors },
+  //   reset,
+  // } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  // const onSubmit: SubmitHandler<FormValues> = async (
+  const onSubmit = async (
+    data: FormValues
+  ): Promise<ApiError[] | undefined> => {
     const finalData = {
       ...data,
       dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     };
     console.log(finalData); // or send it to the API
-    // reset();
     try {
       await api.post("/user/signup", finalData, {
         headers: {
@@ -93,37 +99,28 @@ const SignUp = () => {
       });
       // console.log("Signup Success:", response.data);
       toast.success("Registered Successfully");
+      navigate("/login");
+      return undefined;
 
-      reset();
-      // } catch (error) {
-      // if (axios.isAxiosError(error)) {
-      // toast.error(
-      //   `${
-      //     error.response?.data?.message ||
-      //     error.response?.data ||
-      //     error.message
-      //   }`
-      // );
+      // reset();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const respData = error.response?.data;
 
-      // }
-    } catch (err) {
-      if (
-        axios.isAxiosError(err) &&
-        Array.isArray(err.response?.data?.errors)
-      ) {
-        err.response!.data.errors.forEach(
-          (e: { field: string; message: string }) => {
-            setError(e.field as keyof FormValues, {
-              type: "server",
-              message: e.message,
-            });
-          }
-        );
-      } else if (err instanceof Error) {
-        console.log(err.message);
-      } else {
-        console.log("Unknown error occurred");
+        // 422 validation errors (Yup)
+        if (status === 422 && Array.isArray(respData.errors)) {
+          return respData.errors as ApiError[];
+        }
+
+        // 409 conflict: Email already exists
+        if (status === 409 && typeof respData.message === "string") {
+          return [{ field: "email", message: respData.message }];
+        }
       }
+
+      toast.error("An error occurred during signup");
+      return undefined;
     }
   };
   return (
@@ -136,7 +133,6 @@ const SignUp = () => {
         width={{ base: "100%" }}
         bg="cyan.50"
         overflowX="hidden"
-        // boxSizing="border-box"
       >
         <Box
           height={{ base: "auto" }}
@@ -147,7 +143,6 @@ const SignUp = () => {
           bgSize="cover"
           bgRepeat="no-repeat"
           bgImage={`url(${background})`}
-          // display={{ base: "none", md: "block" }}
         ></Box>
         <Center
           flex={1}
@@ -161,38 +156,34 @@ const SignUp = () => {
             bgColor="#f6f6f6"
             border="none"
             shadow="rgba(0, 0, 0, 0.35) 0px 5px 15px"
-            // shadow="xl"
             w={{ base: "80%", tablet: "60%" }}
-            // maxW="400px"
-            // minH={{ base: "auto", md: "400px" }}
             minH={{ base: "auto" }}
           >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Card.Header pb={{ base: 2, md: 4 }}>
-                <Card.Title
-                  fontFamily="mono"
-                  fontSize={{ base: "xl", md: "2xl" }}
-                >
-                  Sign Up
-                </Card.Title>
-                <Card.Description fontFamily="mono" color="gray">
-                  Already a member?&nbsp;
-                  <Link variant="underline" href="login" color="blue">
-                    Login
-                  </Link>
-                </Card.Description>
-              </Card.Header>
-              <Card.Body pt={0}>
-                <Stack gap="5">
+            {/* <form onSubmit={handleSubmit(onSubmit)}> */}
+            <Card.Header pb={{ base: 2, md: 4 }}>
+              <Card.Title
+                fontFamily="mono"
+                fontSize={{ base: "xl", md: "2xl" }}
+              >
+                Sign Up
+              </Card.Title>
+              <Card.Description fontFamily="mono" color="gray">
+                Already a member?&nbsp;
+                <Link variant="underline" href="login" color="blue">
+                  Login
+                </Link>
+              </Card.Description>
+            </Card.Header>
+            <Card.Body pt={0}>
+              <UserForm mode="signup" onSubmit={onSubmit} />
+              {/* <Stack gap="5">
                   <HStack>
                     <Field.Root
                       invalid={!!errors.firstName}
                       width={{ base: "100%" }}
-                      // required
                     >
                       <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                         First Name
-                        {/* <Field.RequiredIndicator /> */}
                       </Field.Label>
                       <Input
                         placeholder="First Name"
@@ -207,11 +198,9 @@ const SignUp = () => {
                     <Field.Root
                       invalid={!!errors.lastName}
                       width={{ base: "100%" }}
-                      // required
                     >
                       <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                         Last Name
-                        {/* <Field.RequiredIndicator /> */}
                       </Field.Label>
                       <Input
                         placeholder="Last Name"
@@ -227,11 +216,9 @@ const SignUp = () => {
                   <Field.Root
                     invalid={!!errors.email}
                     width={{ base: "100%" }}
-                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Email
-                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Input
                       placeholder="me@example.com"
@@ -245,11 +232,9 @@ const SignUp = () => {
                   </Field.Root>
                   <Field.Root
                     invalid={!!errors.password}
-                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Password
-                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <PasswordInput
                       fontSize="16px"
@@ -262,11 +247,9 @@ const SignUp = () => {
                   </Field.Root>
                   <Field.Root
                     invalid={!!errors.confirmPassword}
-                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Confirm Password
-                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <PasswordInput
                       fontSize="16px"
@@ -320,11 +303,9 @@ const SignUp = () => {
                   <Field.Root
                     invalid={!!errors.dob}
                     width={{ base: "100%" }}
-                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Dob
-                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Controller
                       name="dob"
@@ -390,28 +371,28 @@ const SignUp = () => {
                       {errors.title?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                </Stack>
-              </Card.Body>
-              <Card.Footer pt={1} pb={10}>
-                <Flex
-                  direction="column"
-                  align="center"
-                  // border="2px solid black"
+                </Stack> */}
+            </Card.Body>
+            {/* <Card.Footer pt={1} pb={10}>
+              <Flex
+                direction="column"
+                align="center"
+                // border="2px solid black"
+                width="100%"
+                gap="4"
+              >
+                <Button
+                  bgColor="#6822ef"
+                  _active={{ bg: "blue.300" }}
+                  color="white"
                   width="100%"
-                  gap="4"
+                  type="submit"
                 >
-                  <Button
-                    bgColor="#6822ef"
-                    _active={{ bg: "blue.300" }}
-                    color="white"
-                    width="100%"
-                    type="submit"
-                  >
-                    Sign Up
-                  </Button>
-                </Flex>
-              </Card.Footer>
-            </form>
+                  Sign Up
+                </Button>
+              </Flex>
+            </Card.Footer> */}
+            {/* </form> */}
           </Card.Root>
         </Center>
       </Flex>

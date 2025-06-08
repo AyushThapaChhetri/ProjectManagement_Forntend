@@ -29,7 +29,7 @@ const Body = () => {
     laptopSm: "25vw",
     wide: "20vw",
   });
-  const responsiveWidthClose = useBreakpointValue({ base: "10vw", md: "3vw" });
+  const responsiveWidthClose = useBreakpointValue({ base: "3vw", md: "3vw" });
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
   const navigate = useNavigate();
   return (

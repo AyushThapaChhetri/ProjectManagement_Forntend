@@ -36,7 +36,7 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // ✅ Skip refresh logic for login or register
+    // Skip refresh logic for login or register
     const skipAuthRefresh =
       originalRequest.url?.includes("/login") ||
       originalRequest.url?.includes("/signup");

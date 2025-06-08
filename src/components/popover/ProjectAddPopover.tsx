@@ -101,14 +101,22 @@ const ProjectAddPopover = ({
     >
       <Popover.Trigger asChild>
         {triggerElement || (
-          <Icon
-            size={{
-              base: "sm",
-              tablet: "lg",
-            }}
+          <Flex
+            // border="2px solid black"
+            rounded="md"
+            _hover={{ bg: "gray.50" }}
+            p=".2rem"
+            mb={".3rem"}
           >
-            <IoAddSharp />
-          </Icon>
+            <Icon
+              size={{
+                base: "lg",
+                // tablet: "lg",
+              }}
+            >
+              <IoAddSharp />
+            </Icon>
+          </Flex>
         )}
       </Popover.Trigger>
       <Portal>
