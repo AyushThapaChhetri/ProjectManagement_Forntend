@@ -123,7 +123,11 @@ const Cards = React.memo(
           // gap={2}
           // flexShrink={1}
         >
-          <Flex alignItems="center" userSelect="none" justify={"space-between"}>
+          <Flex
+            alignItems="center"
+            // userSelect="none"
+            justify={"space-between"}
+          >
             <form onSubmit={handleSubmit(onSubmit)}>
               <Controller
                 name="name"
@@ -173,7 +177,7 @@ const Cards = React.memo(
             gap={"2px"}
             padding="5px"
             scrollMarginX="0px"
-            userSelect="none"
+            // userSelect="none"
             cursor="pointer"
             // bg="blue"
             css={{

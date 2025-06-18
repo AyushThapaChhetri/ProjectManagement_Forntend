@@ -54,7 +54,7 @@ const DrawerSideBar = ({
   // is the “Boards” link active?
   // const boardsActive = pathname === "/body";
   const isActive = (path: string) => {
-    console.log(path);
+    // console.log(path);
     return pathname === path;
   };
   return (

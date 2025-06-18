@@ -2,8 +2,24 @@ import { InputWithKbd } from "@/components/ui/searchBar";
 import { Flex, Heading, HStack } from "@chakra-ui/react";
 import { UserTable } from "./userTable";
 import AddUser from "./AddUser";
+import { useState } from "react";
 
 const User = () => {
+  const [searchInput, setSearchInput] = useState("");
+  console.log(searchInput);
+  const [messageAlert, setMessageAlert] = useState<{
+    message: string;
+    status: "error" | "warning" | "info" | "success";
+  } | null>(null);
+
+  //<-version control for force refreshing of the table when addition of new user
+  const [version, setVersion] = useState(0);
+
+  //AddUser component calls it
+  const handleUserAdded = () => {
+    setVersion((v) => v + 1);
+  };
+
   return (
     <>
       <Flex
@@ -24,7 +40,7 @@ const User = () => {
           {/* <Button bg={"purple"} size="xs" onClick={handleAddUsers}>
             Add Users
           </Button> */}
-          <AddUser mode="create" />
+          <AddUser mode="create" handleUserAdded={handleUserAdded} />
         </HStack>
         <Flex
           // border="10px solid red"
@@ -34,7 +50,12 @@ const User = () => {
           h="100%"
           minH={0}
         >
-          <InputWithKbd width="250px" />
+          <InputWithKbd
+            width="250px"
+            placeholder={"Search user"}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
           <Flex
             direction={"column"}
             // border="5px solid black"
@@ -47,7 +68,12 @@ const User = () => {
             // h="fit-content"
             // h="500px"
           >
-            <UserTable />
+            <UserTable
+              searchInput={searchInput}
+              messageAlert={messageAlert}
+              setMessageAlert={setMessageAlert}
+              version={version}
+            />
           </Flex>
         </Flex>
       </Flex>

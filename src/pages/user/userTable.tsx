@@ -1,28 +1,23 @@
 import {
   ActionBar,
   Button,
-  // ButtonGroup,
   Checkbox,
   Flex,
   HStack,
   IconButton,
   Input,
-  // Pagination,
-  // Kbd,
   Portal,
   Select,
   Table,
   Text,
   createListCollection,
-  // useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-// import { usersData } from "./user.data";
+import { useCallback, useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { fetchUsers } from "@/api/UserApi";
 import { useNavigate } from "react-router";
-// import AddUser from "./AddUser";
 import type { FormValues } from "./userType";
 import api from "@/api/Api";
 import { toast } from "react-toastify";
@@ -35,6 +30,8 @@ import {
   LuChevronsLeft,
   LuChevronsRight,
 } from "react-icons/lu";
+import ConfirmationModalDialogs from "@/components/Dialog/ConfirmationModalDialogs";
+import { DismissibleAlert } from "@/components/Alert/DismssibleAlert";
 
 // Define the limit options and collection outside the component (static data)
 const limitOptions = [
@@ -76,7 +73,27 @@ const display = (value: unknown): React.ReactNode => {
   return value.toString();
 };
 
-export const UserTable = () => {
+interface UserTableProps {
+  searchInput: string;
+  messageAlert: {
+    message: string;
+    status: "error" | "warning" | "info" | "success";
+  } | null;
+  setMessageAlert: React.Dispatch<
+    React.SetStateAction<{
+      message: string;
+      status: "error" | "warning" | "info" | "success";
+    } | null>
+  >;
+  version: number;
+}
+
+export const UserTable = ({
+  searchInput,
+  messageAlert,
+  setMessageAlert,
+  version,
+}: UserTableProps) => {
   // const [usersData, setUsersData] = useState<User[] | null>(null);
   const [usersData, setUsersData] = useState<User[]>([]);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -94,31 +111,120 @@ export const UserTable = () => {
   }, [limit]);
 
   // Fetch users when page or limit changes
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        //   const response = await fetchUsers(navigate, page, limit);
-        //   if (response && response.data) {
-        //     setUsersData(response.data);
-        //     setTotal(response.total);
-        //   } else {
-        //     setUsersData([]);
-        //   }
-        const response = await fetchUsers(navigate, page, limit);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetchUsers(navigate, page, limit);
 
-        // if your API returns { data: { users, total } } then destructure further:
-        // const { users, total } = data;
-        setUsersData(response.data); // adjust depending on actual shape
-        setTotal(response.total);
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-        setUsersData([]);
-      }
-    };
-    fetchData();
+  //       // if your API returns { data: { users, total } } then destructure further:
+
+  //       setUsersData(response.data); // adjust depending on actual shape
+  //       setTotal(response.total);
+  //     } catch (error) {
+  //       console.error("Failed to fetch users:", error);
+  //       setUsersData([]);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [navigate, page, limit]);
+
+  // 1) Define fetchData as useCallback so it only changes when page or limit change
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetchUsers(navigate, page, limit);
+      setUsersData(response.data);
+      setTotal(response.total);
+    } catch {
+      setUsersData([]);
+    }
   }, [navigate, page, limit]);
 
-  console.log("Current usersData:", usersData);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, version]);
+
+  // console.log(usersData);
+
+  const filteredData = usersData?.filter(
+    (user) =>
+      (user.firstName ?? "")
+        .toLowerCase()
+        .includes(searchInput.toLowerCase()) ||
+      (user.lastName ?? "").toLowerCase().includes(searchInput.toLowerCase()) ||
+      (user.email ?? "").toLowerCase().includes(searchInput.toLowerCase()) ||
+      (user.phone ?? "").toLowerCase().includes(searchInput.toLowerCase()) ||
+      (user.title ?? "").toLowerCase().includes(searchInput.toLowerCase()) ||
+      (user.address ?? "").toLowerCase().includes(searchInput.toLowerCase()) ||
+      (user.roles ?? []).some((role) =>
+        role.toLowerCase().includes(searchInput.toLowerCase())
+      )
+  );
+  // console.log(filteredData);
+
+  console.log("Selected Ids:", selection);
+
+  //confirmation Dialog box
+  const { open, setOpen } = useDisclosure();
+  // at the top of your component
+  // const [messageAlert, setMessageAlert] = useState<{
+  //   message: string;
+  //   status: "error" | "warning" | "info" | "success";
+  // } | null>(null);
+
+  const handleDelete = () => {
+    console.log("Delete Clicked");
+    setOpen(true);
+    console.log("Open after delete click", open);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    console.log("Open after close click", open);
+  };
+  const handleConfirmDelete = async () => {
+    // your delete logic here
+    console.log("Confirmed delete!");
+    try {
+      const response = await api.delete("/user/uids", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          uids: selection,
+        },
+      });
+
+      setMessageAlert({ message: response.data.message, status: "success" });
+      // clear all checkboxes
+      setSelection([]);
+      // remove the deleted UIDs from your usersData
+      // setUsersData((current) =>
+      //   current.filter((user) => !selection.includes(user.uid))
+      // );
+      await fetchData();
+    } catch (error) {
+      console.log(error);
+
+      let msg = "Unable to delete.";
+      let status: "error" | "info" | "warning" = "error";
+
+      if (axios.isAxiosError(error)) {
+        const code = error.response?.status;
+        msg = error.response?.data?.message || msg;
+        if (code === 400) status = "warning";
+        else if (code === 403) status = "error";
+        else status = "info";
+      }
+
+      setMessageAlert({ message: msg, status });
+    } finally {
+      setOpen(false);
+      console.log("Open after confirm Delete", open);
+    }
+
+    // setOpen(false);
+  };
+
+  // console.log("Current usersData:", usersData);
   // if (!usersData) return <div>Loading...</div>;
 
   const handleEditUser = (user: User) => {
@@ -180,24 +286,32 @@ export const UserTable = () => {
 
   const totalPages = Math.ceil(total / limit);
 
+  // const visibleCount = filteredData?.length;
+  // const hasSelection = selection.length > 0;
+  // const indeterminate = hasSelection && selection.length < usersData?.length;
+  // const indeterminate = hasSelection && selection.length < visibleCount;
+
+  const visibleCount = filteredData?.length;
   const hasSelection = selection.length > 0;
-  const indeterminate = hasSelection && selection.length < usersData?.length;
-  const rows = usersData?.map((item) => (
+  const allVisibleSelected = selection.length === visibleCount;
+  const indeterminate = hasSelection && !allVisibleSelected;
+
+  const rows = filteredData?.map((item, index) => (
     <Table.Row
-      key={item.firstName}
-      data-selected={selection.includes(item.firstName) ? "" : undefined}
+      key={item.uid}
+      data-selected={selection.includes(item.uid) ? "" : undefined}
     >
       <Table.Cell>
         <Checkbox.Root
           size="sm"
           top="0.5"
           aria-label="Select row"
-          checked={selection.includes(item.firstName)}
+          checked={selection.includes(item.uid)}
           onCheckedChange={(changes) => {
             setSelection((prev) =>
               changes.checked
-                ? [...prev, item.firstName]
-                : selection.filter((firstName) => firstName !== item.firstName)
+                ? [...prev, item.uid]
+                : prev.filter((uid) => uid !== item.uid)
             );
           }}
         >
@@ -205,6 +319,7 @@ export const UserTable = () => {
           <Checkbox.Control />
         </Checkbox.Root>
       </Table.Cell>
+      <Table.Cell>{index + 1}</Table.Cell>
       <Table.Cell>{display(item.firstName)}</Table.Cell>
       <Table.Cell>{display(item.lastName)}</Table.Cell>
       <Table.Cell>{display(item.email)}</Table.Cell>
@@ -237,9 +352,19 @@ export const UserTable = () => {
         minH={0}
         bg="transparent"
         rounded="md"
+        userSelect="none"
+        direction={"column"}
 
         // overflow="hidden"
       >
+        {messageAlert && (
+          <DismissibleAlert
+            status={messageAlert.status}
+            title={messageAlert.message}
+            duration={5000} // auto‑close after 5s (optional)
+            onClose={() => setMessageAlert(null)}
+          />
+        )}
         <Table.ScrollArea
           borderWidth="1px"
           rounded="md"
@@ -260,12 +385,12 @@ export const UserTable = () => {
                     top="0.5"
                     aria-label="Select all rows"
                     checked={
-                      indeterminate ? "indeterminate" : selection.length > 0
+                      indeterminate ? "indeterminate" : allVisibleSelected
                     }
                     onCheckedChange={(changes) => {
                       setSelection(
                         changes.checked
-                          ? usersData.map((item) => item.firstName)
+                          ? filteredData.map((item) => item.uid)
                           : []
                       );
                     }}
@@ -274,6 +399,7 @@ export const UserTable = () => {
                     <Checkbox.Control />
                   </Checkbox.Root>
                 </Table.ColumnHeader>
+                <Table.ColumnHeader>Number</Table.ColumnHeader>
                 <Table.ColumnHeader>FirstName</Table.ColumnHeader>
                 <Table.ColumnHeader>LastName</Table.ColumnHeader>
                 <Table.ColumnHeader>Email</Table.ColumnHeader>
@@ -304,6 +430,7 @@ export const UserTable = () => {
           wrap="wrap"
           gap={4}
           minW={"300px"}
+          userSelect="none"
         >
           <HStack spaceX={4} flex="1" minW="300px">
             <HStack spaceX={2}>
@@ -445,10 +572,22 @@ export const UserTable = () => {
                   bg: "red.400",
                   color: "white",
                 }}
+                onClick={handleDelete}
               >
                 Delete
                 <MdDelete size={18} />
               </Button>
+
+              <ConfirmationModalDialogs
+                open={open}
+                onClose={handleClose}
+                onConfirm={handleConfirmDelete}
+                title="Confirm Delete"
+                body="Are you sure you want to delete this user?"
+                confirmText="Confirm"
+                cancelText="Cancel"
+                confirmColorScheme="red"
+              />
               {/* <Button variant="outline" size="sm">
                 Share <Kbd>T</Kbd>
               </Button> */}

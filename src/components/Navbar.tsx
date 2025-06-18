@@ -102,7 +102,7 @@ const Navbar = () => {
                 }}
                 asChild
               >
-                <a href="login">Log In</a>
+                <a href="/login">Log In</a>
               </Button>
               <Button
                 bg="#bd53e6"
@@ -113,7 +113,7 @@ const Navbar = () => {
                 _hover={{ bg: "purple.400" }}
                 asChild
               >
-                <a href="signUp">Sign Up</a>
+                <a href="/signUp">Sign Up</a>
               </Button>
             </>
           )}

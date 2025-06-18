@@ -83,10 +83,10 @@ const DrawerHamburger = ({
               {!tokenAvailable && (
                 <>
                   <Button variant="outline" asChild>
-                    <a href="signup"> Sign Up</a>
+                    <a href="/signup"> Sign Up</a>
                   </Button>
                   <Button asChild>
-                    <a href="login"> Login</a>
+                    <a href="/login"> Login</a>
                   </Button>
                 </>
               )}

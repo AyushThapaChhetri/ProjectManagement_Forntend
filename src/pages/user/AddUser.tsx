@@ -18,6 +18,7 @@ type AddUserProps = {
   triggerElement?: React.ReactNode;
   initialData?: Partial<FormValues>;
   uid?: string;
+  handleUserAdded?: () => void;
 };
 
 const AddUser = ({
@@ -25,6 +26,7 @@ const AddUser = ({
   //   uid,
   initialData,
   triggerElement,
+  handleUserAdded,
 }: AddUserProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,6 +59,9 @@ const AddUser = ({
       // console.log("Signup Success:", response.data);
       toast.success("Added Successfully");
       setIsOpen(false);
+
+      //notify parent
+      handleUserAdded?.();
       return undefined;
 
       // reset();
