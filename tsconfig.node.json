@@ -26,3 +26,7 @@
   },
   "include": ["vite.config.ts"]
 }
+
+// form package.json
+
+// "build": "chakra typegen src/theme/theme.ts --outdir src/types --strict && tsc -b && vite build",
