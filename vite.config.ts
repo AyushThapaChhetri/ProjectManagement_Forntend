@@ -28,6 +28,7 @@ import react from "@vitejs/plugin-react";
 
 // Handle __dirname in ESM
 import { fileURLToPath } from "url";
+import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
 // Simulate __dirname
@@ -40,7 +41,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
-    plugins: [react()],
+    plugins: [react(), tsconfigPaths()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

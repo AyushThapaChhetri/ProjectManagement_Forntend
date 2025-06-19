@@ -6,7 +6,7 @@
   "scripts": {
     "host": "vite --host",
     "dev": "vite --mode development",
-    "build": "chakra typegen src/theme/theme.ts --outdir src/types && tsc -b && vite build",
+    "build": "chakra typegen src/theme/theme.ts --outdir src/types --strict && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "chakra": "chakra",
@@ -45,6 +45,7 @@
     "globals": "^16.0.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

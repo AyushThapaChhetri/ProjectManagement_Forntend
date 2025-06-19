@@ -34,6 +34,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "src/types"]
+  "include": ["src", "src/theme", "src/types"]
   // "include": []
 }
