@@ -6,7 +6,7 @@
   "scripts": {
     "host": "vite --host",
     "dev": "vite --mode development",
-    "build": "tsc -b && vite build",
+    "build": "chakra typegen src/theme/theme.ts --outdir src/types && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "chakra": "chakra",
