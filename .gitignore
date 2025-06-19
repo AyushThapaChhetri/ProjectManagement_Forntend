@@ -31,3 +31,12 @@ dist-ssr
 # Ignore BFG jar tool
 bfg-*.jar
 .git.bfg-report/
+
+# Vite build output
+dist/
+
+# Generated types
+src/types/
+
+# Vercel build output
+.vercel/
