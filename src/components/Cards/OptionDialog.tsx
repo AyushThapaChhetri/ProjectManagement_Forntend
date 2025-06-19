@@ -6,18 +6,20 @@ import type { TaskContextType } from "./context/TaskContext";
 
 interface OptionDialogProps {
   listId: string;
+  projectId: string;
   taskActions: TaskContextType["taskActions"];
   listActions: TaskContextType["listActions"];
 }
 
 const OptionDialog = ({
   listId,
+  projectId,
   taskActions,
   listActions,
 }: OptionDialogProps) => {
   const handleAddCard = () => {
     // console.log("Add card selected");
-    TaskApi.createTask(listId, taskActions);
+    TaskApi.createTask(listId, projectId, taskActions);
   };
   const handleRemoveList = () => {
     // console.log("Remove List with all its Tasks");

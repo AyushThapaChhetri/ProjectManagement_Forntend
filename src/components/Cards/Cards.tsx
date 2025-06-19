@@ -164,6 +164,7 @@ const Cards = React.memo(
             <Box bg={"none"}>
               <OptionDialog
                 listId={id}
+                projectId={projectId}
                 taskActions={taskActions}
                 listActions={listActions}
               />

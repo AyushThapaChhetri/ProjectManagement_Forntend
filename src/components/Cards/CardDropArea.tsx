@@ -15,7 +15,7 @@ const CardDropArea = ({
   expectedHeight = 0,
 }: CardDropAreaProps) => {
   const [showDrop, setShowDrop] = useState(false);
-  const { activeTask, activeList } = useTaskContext();
+  const { activeTask } = useTaskContext();
 
   // Only render when we are dragging a card (activeList != null):
   // if (activeList === null) return null;

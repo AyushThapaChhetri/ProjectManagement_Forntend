@@ -10,7 +10,7 @@ interface TaskDropAreaProps {
 
 const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
   const [showDrop, setShowDrop] = useState(false);
-  const { activeList, activeTask } = useTaskContext();
+  const { activeList } = useTaskContext();
   // useEffect(() => {
   //   console.log("active task ", activeTask);
   //   console.log("active list ", activeList);

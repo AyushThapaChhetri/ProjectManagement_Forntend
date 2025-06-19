@@ -25,7 +25,7 @@ const TaskApi = {
       updatedAt: new Date(Date.now()).toISOString(),
       isEditing: true,
     };
-    // console.log("Creating task:", newTask);
+    console.log("Creating task:", newTask);
     taskActions.addTask(newTask);
     // Example: return await axios.post("/tasks", payload);
   },
