@@ -2,25 +2,36 @@ import Login from "./pages/auth/Login";
 import { Routes, Route } from "react-router";
 import Home from "./pages/home/Home";
 import "@/styles/globals.css";
-// import { Provider } from "./components/ui/provider";
+import SignUp from "./pages/auth/SignUp";
+import Body from "./pages/workspace/Body";
+import "react-datepicker/dist/react-datepicker.css"; // Default styles first
+import "./styles/date-picker-overrides.css"; // Your overrides last to ensure they apply
+import Board from "./pages/board/Board";
+import ProjectWrapper from "./pages/project/ProjectWrapper";
+import User from "./pages/user/User";
 
 function App() {
-  // return <Login />;
+  // return (
+  //   <Routes>
+  //     <Route index element={<Home />} />
+
+  //     <Route path="login" element={<Login />} />
+  //     <Route path="signUp" element={<SignUp />} />
+  //     <Route path="body" element={<Body />} />
+  //   </Routes>
+  // );
   return (
     <Routes>
       <Route index element={<Home />} />
-      {/* <Route path="about" element={<About />} /> */}
-
-      {/* <Route element={<AuthLayout />}> */}
       <Route path="login" element={<Login />} />
-      {/* <Route path="register" element={<Register />} /> */}
-      {/* </Route> */}
-
-      {/* <Route path="concerts">
-    <Route index element={<ConcertsHome />} />
-    <Route path=":city" element={<City />} />
-    <Route path="trending" element={<Trending />} />
-  </Route> */}
+      <Route path="signUp" element={<SignUp />} />
+      {/* workspace shell */}
+      <Route path="body/*" element={<Body />}>
+        {/* nested routes for the right‐pane */}
+        <Route index element={<Board />} />
+        <Route path="users" element={<User />} />
+        <Route path="project/:projectId" element={<ProjectWrapper />} />
+      </Route>
     </Routes>
   );
 }

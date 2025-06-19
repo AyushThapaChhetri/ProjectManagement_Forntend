@@ -20,6 +20,7 @@ import { FaMicrosoft } from "react-icons/fa";
 import { FaApple } from "react-icons/fa";
 
 const Home = () => {
+  // console.log("API URL →", import.meta.env.VITE_API_URL);
   return (
     <>
       <Flex justify="center">
@@ -127,6 +128,8 @@ const Home = () => {
               <Flex gap={5} align="center">
                 <Avatar.Root
                   size={{ base: "sm", tablet: "xl", ultraHd: "2xl" }}
+                  // w="auto"
+                  // h="3.5rem"
                 >
                   <Avatar.Fallback name="Ayush Thapa" />
                   <Avatar.Image src={avatar1} />

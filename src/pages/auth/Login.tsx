@@ -7,20 +7,21 @@ import {
   Center,
   Field,
   Flex,
-  // Heading,
+  Link,
   Input,
   Stack,
-  // VStack,
+  Text,
 } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import background from "@/assets/management.png";
-// import { FaEye } from "react-icons/fa";
-// import { FaEyeSlash } from "react-icons/fa";
-// import { useState } from "react";
-// import { toast } from "react-toastify";
-// import axios, { AxiosError } from "axios";
+import { FaHome } from "react-icons/fa";
+import api from "@/api/Api";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import axios from "axios";
 
 interface FormValues {
   email: string;
@@ -28,16 +29,66 @@ interface FormValues {
 }
 
 const Login = () => {
-  // const [passwordShowLogin, setPasswordShowLogin] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken && refreshToken.trim() !== "") {
+      navigate("/");
+    }
+  });
 
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(loginSchema),
   });
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const response = await api.post("/auth/login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // console.log("Login Success:", response.data);
+      // console.log("User Details:", response.data.user)
+      // console.log(response.data.token);
+      // const token = response.data.token;
+      // console.log(response.data.data)
+      const { accessToken, refreshToken } = response.data.data;
+
+      // console.log("Access Token: ", accessToken);
+      // console.log("Refresh Token: ", refreshToken);
+
+      // localStorage.setItem("authToken", token);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      navigate("/");
+      toast.success("Logged In Successfully");
+      reset();
+    } catch (error: unknown) {
+      // console.log("Caught error:", error);
+
+      if (axios.isAxiosError(error)) {
+        const message =
+          error.response?.data?.message ||
+          error.response?.data ||
+          error.message ||
+          "An unknown error occurred";
+        toast.error(message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else if (typeof error === "string") {
+        toast.error(error);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
+    }
+  };
   return (
     <>
       <Flex
@@ -57,13 +108,7 @@ const Login = () => {
           bgImage={`url(${background})`}
           // display={{ base: "none", md: "block" }}
         ></Box>
-        {/* <Flex
-          direction={{ base: "column", md: "row" }}
-          height={{ base: "50%", md: "100%" }}
-          width={{ base: "100%", md: "50%" }}
-          justify="center"
-          align="center"
-        > */}
+
         <Center
           flex={1}
           w={{ base: "100%", md: "50%" }}
@@ -72,6 +117,16 @@ const Login = () => {
           py={{ base: 4, md: 8 }}
           bgColor="gray.300"
         >
+          <Link
+            href="/"
+            // color="blue"
+            position="absolute"
+            top={{ base: "40%", md: "0" }}
+            left={{ base: "2%", md: "51%" }}
+          >
+            <FaHome />
+            Home
+          </Link>
           <Card.Root
             bgColor="#f6f6f6"
             border="none"
@@ -105,26 +160,33 @@ const Login = () => {
                   <Field.Root
                     invalid={!!errors.email}
                     width={{ base: "100%" }}
-                    required
+                    // required
                   >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Email
+                      {/* <Field.RequiredIndicator /> */}
                     </Field.Label>
                     <Input
                       placeholder="me@example.com"
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("email")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
                       {errors.email?.message}
                     </Field.ErrorText>
                   </Field.Root>
-                  <Field.Root invalid={!!errors.password} required>
+                  <Field.Root
+                    invalid={!!errors.password}
+                    // required
+                  >
                     <Field.Label fontSize={{ base: "sm", md: "sm" }}>
                       Password
+                      <Field.RequiredIndicator />
                     </Field.Label>
                     <PasswordInput
                       size={{ base: "sm", md: "md" }}
+                      fontSize="16px"
                       {...register("password")}
                     />
                     <Field.ErrorText color="red" fontSize="xs">
@@ -134,15 +196,29 @@ const Login = () => {
                 </Stack>
               </Card.Body>
               <Card.Footer pt={1} pb={10}>
-                <Button
-                  bgColor="#6822ef"
-                  _active={{ bg: "blue.300" }}
-                  color="white"
+                <Flex
+                  direction="column"
+                  align="center"
+                  // border="2px solid black"
                   width="100%"
-                  type="submit"
+                  gap="4"
                 >
-                  Login
-                </Button>
+                  <Button
+                    bgColor="#6822ef"
+                    _active={{ bg: "blue.300" }}
+                    color="white"
+                    width="100%"
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+                  <Text>
+                    Don't have an Account? Click Here&nbsp;
+                    <Link variant="underline" href="signUp" color="blue">
+                      SignUp!
+                    </Link>
+                  </Text>
+                </Flex>
               </Card.Footer>
             </form>
           </Card.Root>
