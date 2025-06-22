@@ -82,8 +82,12 @@ const Navbar = () => {
           <Box cursor="pointer">
             <Link href="/body">Workspace</Link>
           </Box>
-          <Box cursor="pointer">About Us</Box>
-          <Box cursor="pointer">Contact</Box>
+          <Box cursor="pointer">
+            <Link href="/body/aboutUs">About Us</Link>
+          </Box>
+          <Box cursor="pointer">
+            <Link href="/body/contactUs">Contact</Link>
+          </Box>
         </Flex>
 
         {/* Auth Buttons */}
