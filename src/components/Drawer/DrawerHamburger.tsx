@@ -62,7 +62,7 @@ const DrawerHamburger = ({
                       borderBottom: "2px solid purple",
                     }}
                   >
-                    About Us
+                    <Link href="/body/aboutUs">About Us</Link>
                   </Text>
                 </Box>
                 <Box cursor="pointer">
@@ -74,7 +74,7 @@ const DrawerHamburger = ({
                       borderBottom: "2px solid purple",
                     }}
                   >
-                    Contact
+                    <Link href="/body/contactUs"> Contact</Link>
                   </Text>
                 </Box>
               </Flex>

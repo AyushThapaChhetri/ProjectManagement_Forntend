@@ -9,6 +9,8 @@ import "./styles/date-picker-overrides.css"; // Your overrides last to ensure th
 import Board from "./pages/board/Board";
 import ProjectWrapper from "./pages/project/ProjectWrapper";
 import User from "./pages/user/User";
+import AboutUs from "./pages/aboutUs/AboutUs";
+import ContactUs from "./pages/contact/ContactUs";
 
 function App() {
   // return (
@@ -29,6 +31,8 @@ function App() {
       <Route path="body/*" element={<Body />}>
         {/* nested routes for the right‐pane */}
         <Route index element={<Board />} />
+        <Route path="aboutUs" element={<AboutUs />} />
+        <Route path="contactUs" element={<ContactUs />} />
         <Route path="users" element={<User />} />
         <Route path="project/:projectId" element={<ProjectWrapper />} />
       </Route>
