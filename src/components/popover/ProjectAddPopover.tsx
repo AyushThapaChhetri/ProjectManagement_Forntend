@@ -121,7 +121,12 @@ const ProjectAddPopover = ({
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner>
-          <Popover.Content>
+          <Popover.Content
+            // bg={"red"}
+            p={"1rem"}
+            // h={"fit-content"}
+            minH={{ base: "400px", tablet: "340px" }}
+          >
             <Popover.Arrow />
             <Popover.Body>
               <form onSubmit={handleSubmit(onSubmit)}>

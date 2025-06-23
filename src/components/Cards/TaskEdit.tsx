@@ -210,33 +210,6 @@ const TaskEdit = ({
                       </Field.ErrorText>
                     </Field.Root>
                     <HStack>
-                      {/* <Select.Root
-                      collection={priorities}
-                      size="sm"
-                      width="150px"
-                      invalid={!!errors.priority}
-                    >
-                      <Select.HiddenSelect />
-                      <Select.Label>Priority</Select.Label>
-                      <Select.Control>
-                        <Select.Trigger>
-                          <Select.ValueText placeholder={task.priority} />
-                        </Select.Trigger>
-                        <Select.IndicatorGroup>
-                          <Select.Indicator />
-                        </Select.IndicatorGroup>
-                      </Select.Control>
-                      <Select.Positioner>
-                        <Select.Content>
-                          {priorities.items.map((priority) => (
-                            <Select.Item item={priority} key={priority.value}>
-                              {priority.label}
-                              <Select.ItemIndicator />
-                            </Select.Item>
-                          ))}
-                        </Select.Content>
-                      </Select.Positioner>
-                    </Select.Root> */}
                       <Controller
                         name="priority"
                         control={control}
@@ -250,7 +223,8 @@ const TaskEdit = ({
                             <Select.Root
                               collection={priorities}
                               size="sm"
-                              width="150px"
+                              // width="150px"
+                              w={"50%"}
                               invalid={!!errors.priority}
                               value={selectedValues}
                               onValueChange={(vals) => {
@@ -295,32 +269,6 @@ const TaskEdit = ({
                           {errors?.priority.message}
                         </p>
                       )}
-                      {/* <Select.Root
-                        collection={statuses}
-                        size="sm"
-                        width="150px"
-                      >
-                        <Select.HiddenSelect />
-                        <Select.Label>Status</Select.Label>
-                        <Select.Control>
-                          <Select.Trigger>
-                            <Select.ValueText placeholder={task.status} />
-                          </Select.Trigger>
-                          <Select.IndicatorGroup>
-                            <Select.Indicator />
-                          </Select.IndicatorGroup>
-                        </Select.Control>
-                        <Select.Positioner>
-                          <Select.Content>
-                            {statuses.items.map((status) => (
-                              <Select.Item item={status} key={status.value}>
-                                {status.label}
-                                <Select.ItemIndicator />
-                              </Select.Item>
-                            ))}
-                          </Select.Content>
-                        </Select.Positioner>
-                      </Select.Root> */}
 
                       <Controller
                         name="status"
@@ -335,7 +283,8 @@ const TaskEdit = ({
                             <Select.Root
                               collection={statuses}
                               size="sm"
-                              width="150px"
+                              // width="150px"
+                              w={"50%"}
                               value={selectedValues}
                               onValueChange={(vals) => {
                                 // vals has shape: { value: string | string[] }
@@ -372,7 +321,9 @@ const TaskEdit = ({
                           );
                         }}
                       />
-                      <Flex direction="column" gap={2}>
+                    </HStack>
+                    <HStack>
+                      <Flex direction="column" gap={2} w={"50%"}>
                         <Text as="h3" fontWeight="medium">
                           StartDate
                         </Text>
@@ -396,7 +347,7 @@ const TaskEdit = ({
                           )}
                         />
                       </Flex>
-                      <Flex direction="column" gap={2}>
+                      <Flex direction="column" gap={2} w={"50%"}>
                         <Text as="h3" fontWeight="medium">
                           End Date
                         </Text>
