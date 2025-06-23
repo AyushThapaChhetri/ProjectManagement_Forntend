@@ -6,7 +6,7 @@ import BoardCard from "./BoardCard";
 const Board = () => {
   return (
     <>
-      <Flex px={"15%"} py={"50px"} direction={"column"}>
+      <Flex px={"15%"} py={"50px"} direction={"column"} overflowY={"auto"}>
         <Flex
           gap={5}
           pb={"20px"}
