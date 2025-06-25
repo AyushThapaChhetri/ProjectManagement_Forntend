@@ -230,34 +230,36 @@ const UserForm = ({ onSubmit, mode, defaultValues }: UserFormProps) => {
               </Field.ErrorText>
             )}
           </Field.Root>
-          <Field.Root invalid={!!errors.address} width={{ base: "100%" }}>
-            <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-              Address
-            </Field.Label>
-            <Input
-              placeholder="Address"
-              size={{ base: "sm", md: "md" }}
-              fontSize="16px"
-              {...register("address")}
-            />
-            <Field.ErrorText color="red" fontSize="xs">
-              {errors.address?.message}
-            </Field.ErrorText>
-          </Field.Root>
-          <Field.Root invalid={!!errors.phone} width={{ base: "100%" }}>
-            <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-              Phone Number
-            </Field.Label>
-            <Input
-              placeholder="Phone no."
-              size={{ base: "sm", md: "md" }}
-              fontSize="16px"
-              {...register("phone")}
-            />
-            <Field.ErrorText color="red" fontSize="xs">
-              {errors.phone?.message}
-            </Field.ErrorText>
-          </Field.Root>
+          <HStack>
+            <Field.Root invalid={!!errors.address} width={{ base: "100%" }}>
+              <Field.Label fontSize={{ base: "sm", md: "sm" }}>
+                Address
+              </Field.Label>
+              <Input
+                placeholder="Address"
+                size={{ base: "sm", md: "md" }}
+                fontSize="16px"
+                {...register("address")}
+              />
+              <Field.ErrorText color="red" fontSize="xs">
+                {errors.address?.message}
+              </Field.ErrorText>
+            </Field.Root>
+            <Field.Root invalid={!!errors.phone} width={{ base: "100%" }}>
+              <Field.Label fontSize={{ base: "sm", md: "sm" }}>
+                Phone Number
+              </Field.Label>
+              <Input
+                placeholder="Phone no."
+                size={{ base: "sm", md: "md" }}
+                fontSize="16px"
+                {...register("phone")}
+              />
+              <Field.ErrorText color="red" fontSize="xs">
+                {errors.phone?.message}
+              </Field.ErrorText>
+            </Field.Root>
+          </HStack>
           <Field.Root invalid={!!errors.title} width={{ base: "100%" }}>
             <Field.Label fontSize={{ base: "sm", md: "sm" }}>
               Job Title

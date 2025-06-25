@@ -1,30 +1,6 @@
-import {
-  Box,
-  // Button,
-  Card,
-  Center,
-  // Field,
-  Flex,
-  Link,
-  // Input,
-  // Stack,
-  //   Text,
-  // HStack,
-  // Fieldset,
-  useMediaQuery,
-} from "@chakra-ui/react";
-// import { PasswordInput } from "@/components/ui/password-input";
-// import {
-// Controller,
-// type SubmitHandler,
-// useForm,
-// type Resolver,
-// } from "react-hook-form";
+import { Box, Card, Center, Flex, Link } from "@chakra-ui/react";
 
 import background from "@/assets/swayambu.png";
-// import { RadioGroup } from "@chakra-ui/react";
-// import { useState } from "react";
-// import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
@@ -72,7 +48,7 @@ const SignUp = () => {
       navigate("/");
     }
   });
-  const [isShortScreen] = useMediaQuery(["(min-height: 801px)"]);
+
   // const {
   //   control,
   //   register,
@@ -127,12 +103,12 @@ const SignUp = () => {
     <>
       <Flex
         direction={{ base: "column", md: "row" }}
-        height={
-          isShortScreen ? { mobile: "100vh" } : { base: "auto", ultra: "100vh" }
-        }
+        h={"100vh"}
         width={{ base: "100%" }}
+        maxW={"3200px"}
         bg="cyan.50"
-        overflowX="hidden"
+        // overflowX="hidden"
+        overflow="hidden"
       >
         <Box
           height={{ base: "auto" }}
@@ -148,16 +124,38 @@ const SignUp = () => {
           flex={1}
           w={{ base: "100%", md: "50%" }}
           minH={{ base: "600px", md: "auto" }}
-          overflowY="auto"
           py={{ base: 4, md: 8 }}
           bgColor="gray.300"
+          // bgColor="green"
+          // overflow="hidden"
         >
           <Card.Root
-            bgColor="#f6f6f6"
+            // bgColor="#f6f6f6"
+            // bgColor="blue.200"
+            colorPalette={"gray"}
             border="none"
             shadow="rgba(0, 0, 0, 0.35) 0px 5px 15px"
             w={{ base: "80%", tablet: "60%" }}
-            minH={{ base: "auto" }}
+            h={"90%"}
+            maxH={"fit-content"}
+            overflow={"auto"}
+            css={{
+              "&::-webkit-scrollbar": {
+                borderRadius: "8px",
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#888", // color of the scrollbar thumb
+                borderRadius: "8px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "#555", // on hover
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1", // background of scrollbar
+              },
+            }}
+            // minH={{ base: "auto" }}
           >
             {/* <form onSubmit={handleSubmit(onSubmit)}> */}
             <Card.Header pb={{ base: 2, md: 4 }}>
@@ -176,223 +174,7 @@ const SignUp = () => {
             </Card.Header>
             <Card.Body pt={0}>
               <UserForm mode="signup" onSubmit={onSubmit} />
-              {/* <Stack gap="5">
-                  <HStack>
-                    <Field.Root
-                      invalid={!!errors.firstName}
-                      width={{ base: "100%" }}
-                    >
-                      <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                        First Name
-                      </Field.Label>
-                      <Input
-                        placeholder="First Name"
-                        size={{ base: "sm", md: "md" }}
-                        fontSize="16px"
-                        {...register("firstName")}
-                      />
-                      <Field.ErrorText color="red" fontSize="xs">
-                        {errors.firstName?.message}
-                      </Field.ErrorText>
-                    </Field.Root>
-                    <Field.Root
-                      invalid={!!errors.lastName}
-                      width={{ base: "100%" }}
-                    >
-                      <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                        Last Name
-                      </Field.Label>
-                      <Input
-                        placeholder="Last Name"
-                        size={{ base: "sm", md: "md" }}
-                        fontSize="16px"
-                        {...register("lastName")}
-                      />
-                      <Field.ErrorText color="red" fontSize="xs">
-                        {errors.lastName?.message}
-                      </Field.ErrorText>
-                    </Field.Root>
-                  </HStack>
-                  <Field.Root
-                    invalid={!!errors.email}
-                    width={{ base: "100%" }}
-                  >
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Email
-                    </Field.Label>
-                    <Input
-                      placeholder="me@example.com"
-                      size={{ base: "sm", md: "md" }}
-                      fontSize="16px"
-                      {...register("email")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.email?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root
-                    invalid={!!errors.password}
-                  >
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Password
-                    </Field.Label>
-                    <PasswordInput
-                      fontSize="16px"
-                      size={{ base: "sm", md: "md" }}
-                      {...register("password")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.password?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root
-                    invalid={!!errors.confirmPassword}
-                  >
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Confirm Password
-                    </Field.Label>
-                    <PasswordInput
-                      fontSize="16px"
-                      size={{ base: "sm", md: "md" }}
-                      {...register("confirmPassword")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.confirmPassword?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-
-                  <Fieldset.Root invalid={!!errors.gender}>
-                    <Fieldset.Legend>Select Gender</Fieldset.Legend>
-                    <Controller
-                      name="gender"
-                      control={control}
-                      render={({ field }) => (
-                        <RadioGroup.Root
-                          name={field.name}
-                          value={field.value}
-                          onValueChange={({ value }) => {
-                            field.onChange(value);
-                          }}
-                        >
-                          <HStack gap="6">
-                            {items.map((item) => (
-                              <RadioGroup.Item
-                                key={item.value}
-                                value={item.value}
-                              >
-                                <RadioGroup.ItemHiddenInput
-                                  onBlur={field.onBlur}
-                                />
-                                <RadioGroup.ItemIndicator />
-                                <RadioGroup.ItemText>
-                                  {item.label}
-                                </RadioGroup.ItemText>
-                              </RadioGroup.Item>
-                            ))}
-                          </HStack>
-                        </RadioGroup.Root>
-                      )}
-                    />
-
-                    {errors.gender && (
-                      <Fieldset.ErrorText>
-                        {errors.gender?.message}
-                      </Fieldset.ErrorText>
-                    )}
-                  </Fieldset.Root>
-                  <Field.Root
-                    invalid={!!errors.dob}
-                    width={{ base: "100%" }}
-                  >
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Dob
-                    </Field.Label>
-                    <Controller
-                      name="dob"
-                      control={control}
-                      defaultValue={undefined}
-                      render={({ field }) => (
-                        <DatePicker
-                          selected={field.value}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          dateFormat="yyyy-MM-dd"
-                        />
-                      )}
-                    />
-                    {errors.dob && (
-                      <Field.ErrorText color="red" fontSize="xs">
-                        {errors.dob?.message}
-                      </Field.ErrorText>
-                    )}
-                  </Field.Root>
-                  <Field.Root
-                    invalid={!!errors.address}
-                    width={{ base: "100%" }}
-                  >
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Address
-                    </Field.Label>
-                    <Input
-                      placeholder="Address"
-                      size={{ base: "sm", md: "md" }}
-                      fontSize="16px"
-                      {...register("address")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.address?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.phone} width={{ base: "100%" }}>
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Phone Number
-                    </Field.Label>
-                    <Input
-                      placeholder="Phone no."
-                      size={{ base: "sm", md: "md" }}
-                      fontSize="16px"
-                      {...register("phone")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.phone?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-                  <Field.Root invalid={!!errors.title} width={{ base: "100%" }}>
-                    <Field.Label fontSize={{ base: "sm", md: "sm" }}>
-                      Job Title
-                    </Field.Label>
-                    <Input
-                      placeholder="Job Title"
-                      size={{ base: "sm", md: "md" }}
-                      fontSize="16px"
-                      {...register("title")}
-                    />
-                    <Field.ErrorText color="red" fontSize="xs">
-                      {errors.title?.message}
-                    </Field.ErrorText>
-                  </Field.Root>
-                </Stack> */}
             </Card.Body>
-            {/* <Card.Footer pt={1} pb={10}>
-              <Flex
-                direction="column"
-                align="center"
-                // border="2px solid black"
-                width="100%"
-                gap="4"
-              >
-                <Button
-                  bgColor="#6822ef"
-                  _active={{ bg: "blue.300" }}
-                  color="white"
-                  width="100%"
-                  type="submit"
-                >
-                  Sign Up
-                </Button>
-              </Flex>
-            </Card.Footer> */}
-            {/* </form> */}
           </Card.Root>
         </Center>
       </Flex>
