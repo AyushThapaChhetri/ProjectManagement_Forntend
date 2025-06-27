@@ -12,7 +12,7 @@ const Board = () => {
           pb={"20px"}
           borderBottom={"2px solid grey"}
           w={"100%"}
-          pl={"100px"}
+          pl={{ base: "10px", tablet: "100px" }}
         >
           <Flex
             border={"2px solid black"}

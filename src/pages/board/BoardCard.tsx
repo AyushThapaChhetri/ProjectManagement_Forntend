@@ -17,7 +17,7 @@ const BoardCard = ({ Boardheading, backgroundColor }: BoardCardProps) => {
         shadow={"md"}
         rounded={"md"}
       >
-        <Text textStyle="lg" textAlign={"justify"}>
+        <Text textStyle={{ base: "md", tablet: "lg" }} textAlign={"justify"}>
           {Boardheading}
         </Text>
       </Flex>
