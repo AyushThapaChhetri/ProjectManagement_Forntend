@@ -1,5 +1,4 @@
 import { createContext } from "react";
-// import type { TaskState, TaskAction } from "./task.types";
 import type { AppState, List, Task, TaskAction } from "../reducer/task.types";
 
 export interface TaskContextType {
