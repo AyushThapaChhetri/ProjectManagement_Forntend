@@ -4,6 +4,8 @@ import { initialState } from "../reducer/taskInitialState";
 import { TaskContext } from "./TaskContext";
 import { taskReducer } from "../reducer/reducer";
 import type { List, Task } from "../reducer/task.types";
+import ListApi from "@/api/ListApi";
+import TaskApi from "@/api/TaskApi";
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(taskReducer, initialState, () => {
@@ -15,13 +17,16 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [activeList, setActiveList] = useState<string | null>(null);
   // console.log("state: ", activeTask);
 
+  const findTask = (taskId: string) => {
+    dispatch({ type: "FIND_TASK", payload: { id: taskId } });
+  };
   const selectTask = (taskId: string | null) => {
     setActiveTask(taskId);
   };
   // console.log("From Provider:", activeTask);
 
-  const selectList = (listId: string | null) => {
-    setActiveList(listId);
+  const selectList = (listUid: string | null) => {
+    setActiveList(listUid);
   };
   // console.log("From Provider:", activeList);
 
@@ -37,31 +42,39 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "DELETE_TASK", payload: { id: taskId } });
   };
 
-  const deleteAllTask = (listId: string) => {
-    dispatch({ type: "DELETE_ALL_TASK", payload: { id: listId } });
+  const deleteAllTask = (listUid: string) => {
+    dispatch({ type: "DELETE_ALL_TASK", payload: { id: listUid } });
+  };
+
+  const setTasks = (tasks: Task[]) => {
+    dispatch({ type: "SET_TASKS", payload: tasks });
   };
 
   const addList = (newList: List) => {
     dispatch({ type: "ADD_LIST", payload: newList });
   };
 
-  const updateList = (listId: string, list: Partial<List>) => {
-    dispatch({ type: "UPDATE_LIST", payload: { id: listId, updates: list } });
+  const updateList = (listUid: string, list: Partial<List>) => {
+    dispatch({ type: "UPDATE_LIST", payload: { id: listUid, updates: list } });
   };
-  const deleteList = (listId: string) => {
-    dispatch({ type: "DELETE_LIST", payload: { id: listId } });
+  const deleteList = (listUid: string) => {
+    dispatch({ type: "DELETE_LIST", payload: { id: listUid } });
   };
-  const deleteProjectList = (projectId: string) => {
-    dispatch({ type: "DELETE_PROJECT_LIST", payload: { pId: projectId } });
+  const deleteProjectList = (projectUid: string) => {
+    dispatch({ type: "DELETE_PROJECT_LIST", payload: { pUid: projectUid } });
+  };
+
+  const setLists = (lists: List[]) => {
+    dispatch({ type: "SET_LISTS", payload: lists });
   };
 
   // const clearState = () => {
   //   dispatch({ type: "RESET_STATE" });
   //   localStorage.removeItem("localStorageItem");
   // };
-  const onDrop = (position: number, listId?: string) => {
+  const onDrop = (position: number, listUid?: string) => {
     // console.log(
-    //   `${activeTask} is going to place into ${listId} and at the postion ${position}`
+    //   `${activeTask} is going to place into ${listUid} and at the postion ${position}`
     // );
     // console.log(
     //   `${activeList} list is going to place into   at the postion ${position}`
@@ -71,44 +84,44 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     // if (activeList) {
     //   dispatch({
     //     type: "MOVE_LIST",
-    //     payload: { listId: activeList, position },
+    //     payload: { listUid: activeList, position },
     //   });
     //   setActiveList(null);
     //   return;
     // }
 
     // // Then check if it's a task
-    // if (activeTask && listId) {
+    // if (activeTask && listUid) {
     //   dispatch({
     //     type: "MOVE_TASK",
     //     payload: {
     //       id: activeTask,
-    //       listId,
+    //       listUid,
     //       position,
     //     },
     //   });
     //   setActiveTask(null);
     //   return;
     // }
-    // console.log(`onDrop called with position: ${position}, listId: ${listId}`);
+    // console.log(`onDrop called with position: ${position}, listUid: ${listUid}`);
     // console.log(`ActiveTask: ${activeTask}, ActiveList: ${activeList}`);
     try {
       // First check if we're dropping a list
       if (activeList) {
         dispatch({
           type: "MOVE_LIST",
-          payload: { listId: activeList, position },
+          payload: { listUid: activeList, position },
         });
         // Moved setActiveList to dragend callback
         return;
       }
 
-      if (activeTask && listId) {
+      if (activeTask && listUid) {
         dispatch({
           type: "MOVE_TASK",
           payload: {
             id: activeTask,
-            listId,
+            listUid,
             position,
           },
         });
@@ -121,6 +134,24 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       setActiveTask(null);
     }
   };
+
+  useEffect(() => {
+    ListApi.fetchLists({
+      addList,
+      updateList,
+      deleteList,
+      deleteProjectList,
+      setLists,
+    });
+    TaskApi.fetchTasks({
+      findTask,
+      addTask,
+      updateTask,
+      deleteTask,
+      deleteAllTask,
+      setTasks,
+    });
+  }, []);
   useEffect(() => {
     localStorage.setItem("localStorageItem", JSON.stringify(state));
   }, [state]);
@@ -152,16 +183,20 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         selectList,
         onDrop,
         taskActions: {
+          state,
+          findTask,
           addTask,
           updateTask,
           deleteTask,
           deleteAllTask,
+          setTasks,
         },
         listActions: {
           addList,
           updateList,
           deleteList,
           deleteProjectList,
+          setLists,
         },
       }}
     >

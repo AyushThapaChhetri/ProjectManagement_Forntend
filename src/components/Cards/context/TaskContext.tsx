@@ -10,10 +10,13 @@ export interface TaskContextType {
   selectTask: (taskId: string | null) => void;
 
   taskActions: {
+    state: AppState;
+    findTask: (taskId: string) => void;
     addTask: (newTask: Task) => void;
     updateTask: (taskId: string, task: Partial<Task>) => void;
     deleteTask: (taskId: string) => void;
     deleteAllTask: (listId: string) => void;
+    setTasks: (tasks: Task[]) => void;
   };
   activeList: string | null;
   selectList: (listId: string | null) => void;
@@ -22,7 +25,8 @@ export interface TaskContextType {
     addList: (newList: List) => void;
     updateList: (listId: string, list: Partial<List>) => void;
     deleteList: (listId: string) => void;
-    deleteProjectList: (projectId: string) => void;
+    deleteProjectList: (projectUid: string) => void;
+    setLists: (lists: List[]) => void;
   };
   onDrop: (position: number, listId?: string) => void;
 }

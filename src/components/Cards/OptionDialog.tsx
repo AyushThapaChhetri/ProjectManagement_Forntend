@@ -3,31 +3,47 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import TaskApi from "@/api/TaskApi";
 import ListApi from "@/api/ListApi";
 import type { TaskContextType } from "./context/TaskContext";
+import { toast } from "react-toastify";
+import { handleApiError } from "@/utils/handleApiError";
 
 interface OptionDialogProps {
-  listId: string;
-  projectId: string;
+  listUid: string;
+  projectUid: string;
   taskActions: TaskContextType["taskActions"];
   listActions: TaskContextType["listActions"];
 }
 
 const OptionDialog = ({
-  listId,
-  projectId,
+  listUid,
+  projectUid,
   taskActions,
   listActions,
 }: OptionDialogProps) => {
   const handleAddCard = () => {
     // console.log("Add card selected");
-    TaskApi.createTask(listId, projectId, taskActions);
+    TaskApi.createTask(listUid, projectUid, taskActions);
   };
-  const handleRemoveList = () => {
+  const handleRemoveList = async () => {
     // console.log("Remove List with all its Tasks");
-    ListApi.deleteList(listId, listActions);
+    // ListApi.deleteList(listUid, listActions);
+    try {
+      // ListApi.createList(listName.name, listActions);
+      await ListApi.deleteList(listUid, listActions);
+
+      // await ListApi.createList(listName.name, projectUid);
+      toast.success(`Successfully Deleted List`);
+    } catch (error: unknown) {
+      handleApiError(error);
+    }
   };
-  const handleRemoveAllTask = () => {
+  const handleRemoveAllTask = async () => {
     // console.log("Remove All Task");
-    TaskApi.deleteAllTask(listId, taskActions);
+    try {
+      await TaskApi.deleteAllTask(listUid, taskActions);
+      toast.success(`Successfully Deleted List`);
+    } catch (error: unknown) {
+      handleApiError(error);
+    }
   };
   return (
     <>

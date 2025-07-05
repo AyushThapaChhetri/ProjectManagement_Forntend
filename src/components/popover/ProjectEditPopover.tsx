@@ -4,33 +4,39 @@ import ProjectAddPopover from "./ProjectAddPopover";
 import type { Project } from "../Cards/reducer/project.type";
 import { ProjectApi } from "@/api/ProjectApi";
 import type { ProjectContextType } from "../Cards/context/ProjectContext";
-import { useState } from "react";
+// import { useState } from "react";
 import { useTaskContext } from "@/hooks/useTaskContext";
 // import TaskApi from "@/api/TaskApi";
-import ListApi from "@/api/ListApi";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { handleApiError } from "@/utils/handleApiError";
 interface ProjectEditPopoverProps {
   showIcons: boolean;
   project: Project;
   projectActions: ProjectContextType["projectActions"];
   setShowIcons: React.Dispatch<React.SetStateAction<boolean>>;
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  menuOpen: boolean;
 }
 const ProjectEditPopover = ({
   showIcons,
   project,
   setShowIcons,
   projectActions,
+  menuOpen,
+  setMenuOpen,
 }: ProjectEditPopoverProps) => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const { listActions } = useTaskContext();
   const navigate = useNavigate();
   const handleDeleteProject = async () => {
     try {
-      await ProjectApi.deleteProject(project.id, projectActions);
-      await ListApi.deleteProjectList(project.id, listActions);
+      await ProjectApi.deleteProject(project.uid, projectActions);
+      listActions.deleteProjectList(project.uid);
+      toast.success(`Successfully Deleted ${project.name}`);
       navigate("/body");
-    } catch (error) {
-      console.error("Failed to delete project or list:", error);
+    } catch (error: unknown) {
+      // console.log("Toast error block triggered", error);
+      handleApiError(error);
     }
   };
 
@@ -38,7 +44,10 @@ const ProjectEditPopover = ({
     <>
       <Menu.Root
         open={menuOpen}
-        onOpenChange={(details) => setMenuOpen(details.open)}
+        onOpenChange={(details) => {
+          setMenuOpen(details.open);
+          setShowIcons(details.open);
+        }}
       >
         <Menu.Trigger asChild>
           <IconButton
@@ -54,7 +63,7 @@ const ProjectEditPopover = ({
             onClick={(e) => {
               // e.preventDefault();
               e.stopPropagation();
-              console.log("Clicked From Edit button");
+              // console.log("Clicked From Edit button");
             }}
           >
             <HiOutlineDotsHorizontal />
@@ -64,7 +73,7 @@ const ProjectEditPopover = ({
           <Menu.Positioner>
             <Menu.Content>
               <ProjectAddPopover
-                key={project.id}
+                key={project.uid}
                 mode="edit"
                 initialData={{
                   name: project.name,
@@ -73,7 +82,7 @@ const ProjectEditPopover = ({
                 }}
                 setShowIcons={setShowIcons}
                 onSubmitHandler={(data) => {
-                  ProjectApi.updateProject(project.id, data, projectActions);
+                  ProjectApi.updateProject(project.uid, data, projectActions);
                   setMenuOpen(false);
                   setShowIcons(false);
                 }}
@@ -81,9 +90,9 @@ const ProjectEditPopover = ({
                 triggerElement={
                   <Menu.Item
                     value="edit"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
+                    // onClick={(e) => {
+                    //   e.stopPropagation();
+                    // }}
                   >
                     Edit
                   </Menu.Item>

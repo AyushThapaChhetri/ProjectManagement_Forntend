@@ -4,6 +4,7 @@ import Cards from "@/components/Cards/Cards";
 import type { Task, List } from "@/components/Cards/reducer/task.types";
 import { useProjectContext } from "@/hooks/userProjectContext";
 import { useTaskContext } from "@/hooks/useTaskContext";
+import { handleApiError } from "@/utils/handleApiError";
 import { Button, Flex, Heading, Input } from "@chakra-ui/react";
 import React, {
   // useEffect,
@@ -13,12 +14,13 @@ import React, {
   type ChangeEvent,
   type FormEvent,
 } from "react";
+// import { toast } from "react-toastify";
 
 interface BoardProps {
-  projectId: string;
+  projectUid: string;
 }
 
-const Project = ({ projectId }: BoardProps) => {
+const Project = ({ projectUid }: BoardProps) => {
   // const Project = () => {
   const [showAddListForm, setShowAddListForm] = useState(false);
   const { state: projectState } = useProjectContext();
@@ -26,6 +28,7 @@ const Project = ({ projectId }: BoardProps) => {
   const [listName, setListName] = useState({
     name: "",
   });
+  // console.log("From Project");
 
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -35,19 +38,19 @@ const Project = ({ projectId }: BoardProps) => {
   >(undefined);
 
   const project = useMemo(() => {
-    return projectState?.projects?.find((p) => p.id === projectId);
-  }, [projectState?.projects, projectId]);
+    return projectState?.projects?.find((p) => p.uid === projectUid);
+  }, [projectState?.projects, projectUid]);
 
   // Only the lists that belong to this project:
   const projectList = useMemo(
-    () => state?.lists?.filter((l) => l.projectId === project?.id) ?? [],
-    [state.lists, project?.id]
+    () => state?.lists?.filter((l) => l.projectUid === project?.uid) ?? [],
+    [state.lists, project?.uid]
   );
 
   // Only the tasks that belong to this project:
   const projectTask = useMemo(
-    () => state?.tasks?.filter((t) => t.projectId === project?.id) ?? [],
-    [state.tasks, project?.id]
+    () => state?.tasks?.filter((t) => t.projectUid === project?.uid) ?? [],
+    [state.tasks, project?.uid]
   );
 
   // useEffect(() => {
@@ -90,7 +93,7 @@ const Project = ({ projectId }: BoardProps) => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const trimmed = listName.name.trim();
@@ -98,11 +101,16 @@ const Project = ({ projectId }: BoardProps) => {
       // console.log("Input is empty. Submission prevented.");
       return;
     } else {
-      // ListApi.createList(listName.name, listActions);
-      ListApi.createList(listName.name, projectId, listActions);
-
-      setShowAddListForm(false);
-      setListName({ name: "" });
+      try {
+        // ListApi.createList(listName.name, listActions);
+        await ListApi.createList(listName.name, projectUid, listActions);
+        // await ListApi.createList(listName.name, projectUid);
+        // toast.success(`Successfully Created List ${listName.name}`);
+        setShowAddListForm(false);
+        setListName({ name: "" });
+      } catch (error: unknown) {
+        handleApiError(error);
+      }
     }
   };
 
@@ -145,21 +153,21 @@ const Project = ({ projectId }: BoardProps) => {
           {projectList?.map((e: List, i) => {
             // const listTasks = state.tasks.filter(
             const listTasks = projectTask?.filter(
-              (task: Task) => task.listId === e.id
+              (task: Task) => task.listUid === e.uid
             );
             return (
-              <React.Fragment key={e.id}>
+              <React.Fragment key={e.uid}>
                 <Cards
-                  key={e.id}
-                  id={e.id}
+                  key={e.uid}
+                  uid={e.uid}
                   name={e.name}
-                  projectId={e.projectId}
+                  projectUid={e.projectUid}
                   tasks={listTasks} // Pass filtered tasks
                   draggable
                   innerRef={(el) => {
                     // Using the direct `ref` prop
-                    if (el) cardRefs.current.set(e.id, el);
-                    else cardRefs.current.delete(e.id);
+                    if (el) cardRefs.current.set(e.uid, el);
+                    else cardRefs.current.delete(e.uid);
                   }}
                   onDragStartCallback={handleCardDragStart} // Pass callback
                   onDragEndCallback={handleCardDragEnd} // Pass callback

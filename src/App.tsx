@@ -34,7 +34,7 @@ function App() {
         <Route path="aboutUs" element={<AboutUs />} />
         <Route path="contactUs" element={<ContactUs />} />
         <Route path="users" element={<User />} />
-        <Route path="project/:projectId" element={<ProjectWrapper />} />
+        <Route path="projects/:projectUid" element={<ProjectWrapper />} />
       </Route>
     </Routes>
   );

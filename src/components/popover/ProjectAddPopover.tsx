@@ -21,6 +21,7 @@ import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { ProjectApi } from "@/api/ProjectApi";
 import { useProjectContext } from "@/hooks/userProjectContext";
+import { useState } from "react";
 type FormValues = InferType<typeof ProjectSchema>;
 
 type EditValues = {
@@ -51,6 +52,9 @@ const ProjectAddPopover = ({
     tabletSm: "right", // for tablet and up
   }) as placement;
   const { projectActions } = useProjectContext();
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  // defaultValues Applied only once on component mount
   const {
     control,
     register,
@@ -71,20 +75,39 @@ const ProjectAddPopover = ({
           },
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    if (onSubmitHandler) {
-      onSubmitHandler(data);
-      reset(data);
-    } else {
-      ProjectApi.createProject(data, projectActions);
+  // const onSubmit: SubmitHandler<FormValues> = (data) => {
+  //   if (onSubmitHandler) {
+  //     onSubmitHandler(data);
+  //     reset(data);
+  //   } else {
+  //     ProjectApi.createProject(data, projectActions);
+  //     reset();
+  //   }
+  // };
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      if (onSubmitHandler) {
+        onSubmitHandler(data);
+      } else {
+        await ProjectApi.createProject(data, projectActions);
+      }
       reset();
+      setIsPopoverOpen(false); //  only close if successful
+    } catch (err) {
+      console.error("Failed to submit", err);
     }
   };
 
   return (
     <Popover.Root
       positioning={{ placement: popoverPlacement }}
+      open={isPopoverOpen}
+      // reset()	Manually updates the form fields at any time
+      // onOpenChange with reset() Ensures the form is cleared (create) or prefilled (edit) every time the popover opens
+      //       onOpenChange is a prop from Chakra UI's Popover component.
+      // It’s a callback that runs whenever the popover opens or closes, with { open: boolean }.
       onOpenChange={({ open }) => {
+        setIsPopoverOpen(open);
         if (open) {
           if (mode === "create") {
             reset(); // Reset form when opening in create mode
@@ -211,20 +234,20 @@ const ProjectAddPopover = ({
                         cancel
                       </Button>
                     </Popover.CloseTrigger>
-                    <Popover.CloseTrigger asChild>
-                      <Button
-                        bg="#bd53e6"
-                        color="white"
-                        borderRadius="md"
-                        fontSize="sm"
-                        width="80px"
-                        size="md"
-                        _hover={{ bg: "purple.400" }}
-                        type="submit"
-                      >
-                        {mode === "edit" ? "Update" : "Create"}
-                      </Button>
-                    </Popover.CloseTrigger>
+                    {/* <Popover.CloseTrigger asChild> */}
+                    <Button
+                      bg="#bd53e6"
+                      color="white"
+                      borderRadius="md"
+                      fontSize="sm"
+                      width="80px"
+                      size="md"
+                      _hover={{ bg: "purple.400" }}
+                      type="submit"
+                    >
+                      {mode === "edit" ? "Update" : "Create"}
+                    </Button>
+                    {/* </Popover.CloseTrigger> */}
                   </Flex>
                 </Stack>
               </form>

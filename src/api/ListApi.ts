@@ -1,36 +1,76 @@
 import type { TaskContextType } from "@/components/Cards/context/TaskContext";
+import api from "./Api";
 
 type listActions = TaskContextType["listActions"];
 const ListApi = {
   async createList(
     listName: string,
-    projectId: string,
+    projectUid: string,
     listActions: listActions
   ) {
     // console.log("Creation of list");
+    // const newList = {
+    //   id: `temp-${Date.now()}`,
+    //   uid: "",
+    //   name: listName,
+    //   projectUid: projectUid,
+    //   createdAt: "",
+    //   updatedAt: "",
+    //   isEditing: true,
+    // };
     const newList = {
-      id: `temp-${Date.now()}`,
-      uid: "",
       name: listName,
-      projectId: projectId,
-      createdAt: "",
-      updatedAt: "",
-      isEditing: true,
+      projectUid: projectUid,
     };
-    listActions.addList(newList);
+    try {
+      const response = await api.post("/lists", newList);
+      const responseList = response.data;
+      console.log(responseList.data);
+      listActions.addList(responseList.data);
+    } catch (error) {
+      console.error("Failed to create project: ", error);
+      throw error;
+    }
   },
-  async updateList(listId: string, listName: string, listActions: listActions) {
-    const editedList = {
-      name: listName,
-      updatedAt: new Date(Date.now()).toISOString(),
-    };
-    listActions.updateList(listId, editedList);
+  async updateList(
+    listUid: string,
+    listName: string,
+    listActions: listActions
+  ) {
+    try {
+      const updateData = {
+        name: listName,
+      };
+      const response = await api.patch(`/lists/${listUid}`, updateData);
+      console.log("List update successful: ", response.data.data);
+      listActions.updateList(listUid, response.data.data);
+    } catch (error) {
+      console.error("Failed to update project:", error);
+      throw error;
+    }
   },
-  async deleteList(listId: string, listActions: listActions) {
-    listActions.deleteList(listId);
+  async deleteList(listUid: string, listActions: listActions) {
+    // listActions.deleteList(listUid);
+    try {
+      console.log(`before deletion : /lists/${listUid}`);
+      await api.delete(`/lists/${listUid}`);
+      listActions.deleteList(listUid);
+    } catch (error) {
+      console.error("Failed to delete List: ", error);
+      throw error;
+    }
   },
   async deleteProjectList(projectId: string, listActions: listActions) {
     listActions.deleteProjectList(projectId);
+  },
+  async fetchLists(listActions: listActions) {
+    try {
+      const response = await api.get("/lists");
+      const lists = response.data;
+      listActions.setLists(lists.data);
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+    }
   },
   // async (){
 

@@ -33,6 +33,8 @@ import TaskApi from "@/api/TaskApi";
 import { useTaskContext } from "@/hooks/useTaskContext";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type { InferType } from "yup";
+import { handleApiError } from "@/utils/handleApiError";
+import { toast } from "react-toastify";
 type FormValues = InferType<typeof TaskSchema>;
 
 // import { Controller } from "react-hook-form";
@@ -126,20 +128,18 @@ const TaskEdit = ({
     },
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     // const finalData = {
     //   ...data,
     //   dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     // };
     handleSetShowCheckBox();
-    TaskApi.editTask(
-      task.id,
-      {
-        ...data,
-        updatedAt: new Date(Date.now()).toISOString(),
-      },
-      taskActions
-    );
+    try {
+      await TaskApi.editTask(task.id, data, taskActions);
+    } catch (error: unknown) {
+      toast.error("Error");
+      handleApiError(error);
+    }
     // console.log("Form is submitting..."); // This should log
     // console.log(data); // Your final form data
     // console.log("Id's of task and list", task.id, task.listId);
@@ -180,8 +180,15 @@ const TaskEdit = ({
                             defaultValue={field.value}
                             fontSize="16px"
                             onChange={field.onChange}
+                            width={"200px"}
                           >
-                            <Editable.Preview />
+                            <Editable.Preview
+                              display="inline-block" // make it respect width
+                              width="200px" // same width as input
+                              whiteSpace="nowrap" // optional: prevent wrapping
+                              overflow="hidden"
+                              textOverflow="ellipsis" // optional: handle overflow
+                            />
                             <Editable.Input />
                           </Editable.Root>
                         )}

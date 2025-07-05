@@ -5,6 +5,11 @@ export const projectReducer = (
   action: ProjectAction
 ): ProjectState => {
   switch (action.type) {
+    case "SET_PROJECTS":
+      return {
+        ...state,
+        projects: action.payload,
+      };
     case "ADD_PROJECT":
       return {
         ...state,
@@ -13,12 +18,12 @@ export const projectReducer = (
     case "SELECT_PROJECT":
       return {
         ...state,
-        selectedProjectId: action.payload.id,
+        selectedProjectUid: action.payload.uid,
       };
     case "UPDATE_PROJECT": {
-      const { id, updates } = action.payload;
+      const { uid, updates } = action.payload;
 
-      const findProject = state?.projects?.find((p) => p.id === id);
+      const findProject = state?.projects?.find((p) => p.uid === uid);
       if (!findProject) return state;
 
       // const changingProject = state?.projects?.filter((p) => p.id === id);
@@ -45,7 +50,7 @@ export const projectReducer = (
       // const updatedProject = [...filteredProject, editProject];
 
       const updatedProject = state?.projects?.map((p) =>
-        p.id === id ? editProject : p
+        p.uid === uid ? editProject : p
       );
 
       return {
@@ -66,13 +71,13 @@ export const projectReducer = (
     case "DELETE_PROJECT": {
       return {
         ...state,
-        projects: state.projects?.filter((p) => p.id !== action.payload.id),
+        projects: state.projects?.filter((p) => p.uid !== action.payload.uid),
       };
     }
     case "DESELECT_PROJECT":
       return {
         ...state,
-        selectedProjectId: null,
+        selectedProjectUid: null,
       };
     default:
       return state;

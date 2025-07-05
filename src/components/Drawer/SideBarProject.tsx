@@ -18,9 +18,11 @@ const SideBarProject = ({
 }: SideBarProjectProps) => {
   const [showIcons, setShowIcons] = useState(false);
   const { projectActions } = useProjectContext();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleProjectClick = () => {
-    ProjectApi.selectProject(project.id, projectActions);
+    // console.log("From SideBar");
+    ProjectApi.selectProject(project.uid, projectActions);
   };
   // console.log("From SideBar", selectedProjectId);
 
@@ -30,7 +32,10 @@ const SideBarProject = ({
         onMouseEnter={() => {
           setShowIcons(true);
         }}
-        onMouseLeave={() => setShowIcons(false)}
+        onMouseLeave={() => {
+          // Only hide if menu is not open
+          if (!menuOpen) setShowIcons(false);
+        }}
         onClick={handleProjectClick}
       >
         <ProjectEditPopover
@@ -38,6 +43,8 @@ const SideBarProject = ({
           project={project}
           setShowIcons={setShowIcons}
           projectActions={projectActions}
+          menuOpen={menuOpen}
+          setMenuOpen={setMenuOpen}
         />
       </Flex>
     </>

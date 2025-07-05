@@ -15,18 +15,20 @@ import { MdDelete } from "react-icons/md";
 import TaskEdit from "./TaskEdit";
 import TaskApi from "@/api/TaskApi";
 import { useTaskContext } from "@/hooks/useTaskContext";
+import { toast } from "react-toastify";
+import { handleApiError } from "@/utils/handleApiError";
 
 interface SubTaskCardsProps {
   task: Task;
-  listId: string;
+  listUid: string;
   listName: string;
-  projectId: string;
+  projectUid: string;
 }
 
 const SubTaskCards = ({
   task,
-  listId,
-  projectId,
+  // listUid,
+  // projectUid,
   listName,
 }: SubTaskCardsProps) => {
   const [showCheckBox, setShowCheckBox] = useState(false);
@@ -84,28 +86,34 @@ const SubTaskCards = ({
   };
 
   //Form event
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmed = formData.taskTitle.trim();
     if (trimmed === "") {
       TaskApi.deleteTask(task.id, taskActions);
     } else {
-      TaskApi.editTask(
-        task.id,
-        {
-          name: trimmed,
-          updatedAt: new Date(Date.now()).toISOString(),
-          isEditing: false,
-        },
-        taskActions
-      );
-
-      TaskApi.createTask(listId, projectId, taskActions);
+      try {
+        await TaskApi.editTask(
+          task.id,
+          {
+            name: trimmed,
+          },
+          taskActions
+        );
+      } catch (error: unknown) {
+        handleApiError(error);
+      }
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     // console.log("Delete id: ", task.id);
-    TaskApi.deleteTask(task.id, taskActions);
+
+    try {
+      await TaskApi.deleteTask(task.id, taskActions);
+      toast.success(`Successfully delete Task`);
+    } catch (error: unknown) {
+      handleApiError(error);
+    }
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

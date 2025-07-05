@@ -19,6 +19,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import type { Project } from "../Cards/reducer/project.type";
 import { useProjectContext } from "@/hooks/userProjectContext";
 import { FaUserAlt } from "react-icons/fa";
+import { ProjectApi } from "@/api/ProjectApi";
 
 // import { useProjectContext } from "@/hooks/userProjectContext";
 // import type { Project } from "../Cards/reducer/project.type";
@@ -47,7 +48,7 @@ const DrawerSideBar = ({
   //   ProjectApi.deselectProject(projectActions);
   //   setBoard(true);
   // };
-  const { state } = useProjectContext();
+  const { state, projectActions } = useProjectContext();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -249,11 +250,11 @@ const DrawerSideBar = ({
                     );
                   })} */}
                   {state?.projects?.map((project: Project) => {
-                    const projectPath = `/body/project/${project.id}`;
+                    const projectPath = `/body/projects/${project.uid}`;
                     // const isActive = pathname === projectPath;
 
                     return (
-                      <React.Fragment key={project.id}>
+                      <React.Fragment key={project.uid}>
                         <Flex
                           align="center"
                           rounded="md"
@@ -268,9 +269,13 @@ const DrawerSideBar = ({
                           }}
                           cursor="pointer"
                           caretColor="transparent"
-                          onClick={() =>
-                            navigate(`/body/project/${project.id}`)
-                          }
+                          onClick={() => {
+                            navigate(`/body/projects/${project.uid}`);
+                            ProjectApi.selectProject(
+                              project.uid,
+                              projectActions
+                            );
+                          }}
                         >
                           <Flex flexGrow={1}>
                             <Box>

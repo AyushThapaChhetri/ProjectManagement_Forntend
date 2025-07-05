@@ -25,10 +25,10 @@ export type Status = (typeof Statuses)[number];
 // }
 
 export interface List {
-  id: string;
+  // id: string;
   uid: string;
   name: string;
-  projectId: string;
+  projectUid: string;
   createdAt: string;
   updatedAt: string;
   isEditing: boolean;
@@ -36,9 +36,9 @@ export interface List {
 
 export interface Task {
   id: string;
-  listId: string;
+  listUid: string;
   uid: string;
-  projectId: string;
+  projectUid: string;
   name: string;
   description?: string;
   priority: Priority;
@@ -58,6 +58,8 @@ export interface AppState {
   // projects: Project[];
   lists: List[];
   tasks: Task[];
+  selectedTask?: Task | null;
+  selectedList?: List | null;
 }
 
 // export interface TaskState {
@@ -87,6 +89,7 @@ export interface AppState {
 //     };
 
 export type TaskAction =
+  | { type: "FIND_TASK"; payload: { id: string } }
   | { type: "SET_TASKS"; payload: Task[] }
   | { type: "ADD_TASK"; payload: Task }
   | { type: "UPDATE_TASK"; payload: { id: string; updates: Partial<Task> } }
@@ -94,12 +97,13 @@ export type TaskAction =
   | { type: "DELETE_ALL_TASK"; payload: { id: string } }
   | {
       type: "MOVE_TASK";
-      payload: { id: string; listId: string; position: number };
+      payload: { id: string; listUid: string; position: number };
     }
   // Add list actions
+  | { type: "SET_LISTS"; payload: List[] }
   | { type: "ADD_LIST"; payload: List }
   | { type: "UPDATE_LIST"; payload: { id: string; updates: Partial<List> } }
   | { type: "DELETE_LIST"; payload: { id: string } }
-  | { type: "MOVE_LIST"; payload: { listId: string; position: number } }
-  | { type: "DELETE_PROJECT_LIST"; payload: { pId: string } };
+  | { type: "MOVE_LIST"; payload: { listUid: string; position: number } }
+  | { type: "DELETE_PROJECT_LIST"; payload: { pUid: string } };
 // | { type: "DELETE_LIST"; payload: string };

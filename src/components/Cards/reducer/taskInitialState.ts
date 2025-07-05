@@ -18,4 +18,5 @@ export const initialState: AppState = {
   // ],
   lists: [],
   tasks: [],
+  selectedTask: null,
 };

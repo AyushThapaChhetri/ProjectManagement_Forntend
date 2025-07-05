@@ -19,27 +19,28 @@ import { listSchema } from "@/schemas/listSchema";
 import type { InferType } from "yup";
 import TaskDropArea from "./TaskDropArea";
 import ListApi from "@/api/ListApi";
+import { handleApiError } from "@/utils/handleApiError";
 type FormValues = InferType<typeof listSchema>;
 
 interface CardsProps {
-  id: List["id"];
+  uid: List["uid"];
   name: List["name"];
   tasks: Task[]; // New prop
   draggable?: boolean;
   innerRef?: React.Ref<HTMLDivElement>;
-  projectId: string;
+  projectUid: string;
   onDragStartCallback: (height: number) => void; // NEW: Callback for drag start
   onDragEndCallback: (cardId: string) => void; // NEW: Callback for drag end
 }
 
 const Cards = React.memo(
   ({
-    id,
+    uid,
     name,
     tasks,
     draggable,
     innerRef,
-    projectId,
+    projectUid,
     onDragStartCallback,
     onDragEndCallback,
   }: CardsProps) => {
@@ -65,10 +66,10 @@ const Cards = React.memo(
     // console.log("Current state in Cards component:", state);
 
     const handleAddTask = () => {
-      TaskApi.createTask(id, projectId, taskActions);
+      TaskApi.createTask(uid, projectUid, taskActions);
     };
     // Filter tasks to only show those belonging to this specific list
-    const listTasks = tasks.filter((task) => task.listId === id);
+    const listTasks = tasks.filter((task) => task.listUid === uid);
 
     const {
       // register,
@@ -81,7 +82,12 @@ const Cards = React.memo(
     const onSubmit: SubmitHandler<FormValues> = (data) => {
       // console.log("Form is submitting..."); // This should log
       // console.log(data.name); // Your final form data
-      ListApi.updateList(id, data.name, listActions);
+      try {
+        ListApi.updateList(uid, data.name, listActions);
+        // toast.success(`Successfully Updated List`);
+      } catch (error: unknown) {
+        handleApiError(error);
+      }
       // reset();
     };
 
@@ -94,21 +100,21 @@ const Cards = React.memo(
           maxH="96%"
           draggable={draggable}
           onDragStart={(e) => {
-            e.dataTransfer.setData("text/plain", id); // “kickstart” native drag
+            e.dataTransfer.setData("text/plain", uid); // “kickstart” native drag
             selectTask(null);
-            selectList(id);
+            selectList(uid);
             // NEW: Get height from localCardRef and call the callback
             if (localCardRef.current) {
               // onDragStartCallback(id, localCardRef.current.offsetHeight);
               onDragStartCallback(localCardRef.current.offsetHeight);
             }
-            console.log("Drag started for list:", id);
+            console.log("Drag started for list:", uid);
           }}
           onDragEnd={() => {
-            console.log("Drag ended for list:", id);
+            console.log("Drag ended for list:", uid);
             // selectList(null);
             // NEW: Call the drag end callback
-            onDragEndCallback(id);
+            onDragEndCallback(uid);
           }}
           // h="calc(100% - 36px - 26px)"
           w="272px"
@@ -150,6 +156,12 @@ const Cards = React.memo(
                         _hover={{ bg: "purple.300" }}
                         borderRadius="md"
                         p="1"
+                        css={{
+                          display: "inline-block",
+                          textWrap: "nowrap",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                        }}
                       />
                       <Editable.Input
                         border={errors.name ? "1px solid red" : "1px solid"}
@@ -163,8 +175,8 @@ const Cards = React.memo(
             </form>
             <Box bg={"none"}>
               <OptionDialog
-                listId={id}
-                projectId={projectId}
+                listUid={uid}
+                projectUid={projectUid}
                 taskActions={taskActions}
                 listActions={listActions}
               />
@@ -199,7 +211,7 @@ const Cards = React.memo(
           >
             {/* Drop area at the very top of an empty list  */}
 
-            <TaskDropArea listId={id} position={0} onDrop={onDrop} />
+            <TaskDropArea listUid={uid} position={0} onDrop={onDrop} />
 
             {/* <TaskDropArea listId={id} position={0} onDrop={onDrop} /> */}
             {listTasks.length > 0 &&
@@ -207,12 +219,12 @@ const Cards = React.memo(
                 <React.Fragment key={task.id}>
                   <SubTaskCards
                     task={task}
-                    projectId={projectId}
-                    listId={id}
+                    projectUid={projectUid}
+                    listUid={uid}
                     listName={name}
                   />
                   <TaskDropArea
-                    listId={id}
+                    listUid={uid}
                     position={i + 1}
                     onDrop={onDrop}
                     // listName={name}

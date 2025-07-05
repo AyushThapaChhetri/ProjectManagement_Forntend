@@ -1,17 +1,17 @@
 export interface Project {
-  id: string;
+  // id: string;
   uid: string;
   name: string;
   description?: string;
   deadline?: string; // ISO string, e.g., "2025-05-27T12:00:00Z"
-  managerId: number;
+  managerId?: number;
   createdAt: string;
   updatedAt: string;
   // For inline editing on sidebar
 }
 export interface ProjectState {
   //   selectedProjectId: string | null; // Optional but helpful
-  selectedProjectId: string | null;
+  selectedProjectUid: string | null;
   projects: Project[];
 }
 
@@ -25,16 +25,16 @@ export type ProjectAction =
   // Updates an existing project based on its ID with the given partial updates
   | {
       type: "UPDATE_PROJECT";
-      payload: { id: string; updates: Partial<Project> };
+      payload: { uid: string; updates: Partial<Project> };
     }
 
   // Deletes a project by its ID
-  | { type: "DELETE_PROJECT"; payload: { id: string } }
+  | { type: "DELETE_PROJECT"; payload: { uid: string } }
 
   // Toggles or sets the isEditing state of a specific project (for inline editing UI)
   | {
       type: "SELECT_PROJECT";
-      payload: { id: string };
+      payload: { uid: string };
     }
   | {
       type: "DESELECT_PROJECT";

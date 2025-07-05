@@ -3,12 +3,12 @@ import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface TaskDropAreaProps {
-  listId: string;
+  listUid: string;
   position: number;
-  onDrop: (position: number, listId: string) => void;
+  onDrop: (position: number, listUid: string) => void;
 }
 
-const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
+const TaskDropArea = ({ listUid, position, onDrop }: TaskDropAreaProps) => {
   const [showDrop, setShowDrop] = useState(false);
   const { activeList } = useTaskContext();
   // useEffect(() => {
@@ -38,7 +38,7 @@ const TaskDropArea = ({ listId, position, onDrop }: TaskDropAreaProps) => {
       onDrop={(e) => {
         e.preventDefault(); // prevent the browser default
         if (activeList) return;
-        onDrop(position, listId); //  call your callback
+        onDrop(position, listUid); //  call your callback
         setShowDrop(false);
       }}
       onDragOver={(e) => {
