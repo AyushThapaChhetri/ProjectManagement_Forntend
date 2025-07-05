@@ -216,7 +216,7 @@ const Cards = React.memo(
             {/* <TaskDropArea listId={id} position={0} onDrop={onDrop} /> */}
             {listTasks.length > 0 &&
               listTasks?.map((task: Task, i) => (
-                <React.Fragment key={task.id}>
+                <React.Fragment key={task.uid}>
                   <SubTaskCards
                     task={task}
                     projectUid={projectUid}

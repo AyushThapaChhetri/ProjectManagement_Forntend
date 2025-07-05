@@ -120,7 +120,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         dispatch({
           type: "MOVE_TASK",
           payload: {
-            id: activeTask,
+            uid: activeTask,
             listUid,
             position,
           },

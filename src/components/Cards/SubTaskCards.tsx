@@ -245,15 +245,15 @@ const SubTaskCards = ({
             draggable
             onDragStart={(e) => {
               e.stopPropagation();
-              e.dataTransfer.setData("text/plain", task.id); // required for browser drag
+              e.dataTransfer.setData("text/plain", task.uid); // required for browser drag
               selectList(null);
-              selectTask(task.id);
-              console.log("Drag started for task:", task.id);
+              selectTask(task.uid);
+              console.log("Drag started for task:", task.uid);
             }}
             onDragEnd={(e) => {
               e.stopPropagation();
 
-              console.log("Drag ended for task:", task.id);
+              console.log("Drag ended for task:", task.uid);
               // selectTask(null);
             }}
           >

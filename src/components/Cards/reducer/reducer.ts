@@ -103,13 +103,13 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
         tasks: state.tasks.filter((task) => task.listUid !== action.payload.id),
       };
     case "MOVE_TASK": {
-      const { id, listUid, position } = action.payload;
+      const { uid, listUid, position } = action.payload;
 
       // 1) Remove the task from wherever it was
-      const taskToMove = state.tasks.find((t) => t.id === id);
+      const taskToMove = state.tasks.find((t) => t.uid === uid);
       if (!taskToMove) return state;
 
-      const withoutTask = state.tasks.filter((t) => t.id !== id);
+      const withoutTask = state.tasks.filter((t) => t.uid !== uid);
 
       // 2) Update its listUid
       const moved = { ...taskToMove, listUid };

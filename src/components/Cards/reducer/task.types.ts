@@ -97,7 +97,7 @@ export type TaskAction =
   | { type: "DELETE_ALL_TASK"; payload: { id: string } }
   | {
       type: "MOVE_TASK";
-      payload: { id: string; listUid: string; position: number };
+      payload: { uid: string; listUid: string; position: number };
     }
   // Add list actions
   | { type: "SET_LISTS"; payload: List[] }
