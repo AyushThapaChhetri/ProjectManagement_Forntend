@@ -271,6 +271,7 @@ const DrawerSideBar = ({
                           caretColor="transparent"
                           onClick={() => {
                             navigate(`/body/projects/${project.uid}`);
+                            // console.log("Clicked", project.name);
                             ProjectApi.selectProject(
                               project.uid,
                               projectActions

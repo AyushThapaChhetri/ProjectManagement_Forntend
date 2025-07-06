@@ -20,9 +20,10 @@ const SideBarProject = ({
   const { projectActions } = useProjectContext();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleProjectClick = () => {
+  const handleProjectClick = async () => {
     // console.log("From SideBar");
-    ProjectApi.selectProject(project.uid, projectActions);
+    await ProjectApi.selectProject(project.uid, projectActions);
+    // console.log("Clicked", project.name);
   };
   // console.log("From SideBar", selectedProjectId);
 

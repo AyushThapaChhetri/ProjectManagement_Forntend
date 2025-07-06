@@ -63,9 +63,14 @@ const ListApi = {
   async deleteProjectList(projectId: string, listActions: listActions) {
     listActions.deleteProjectList(projectId);
   },
-  async fetchLists(listActions: listActions) {
+  async fetchLists(
+    selectedProjectUid: string | null,
+    listActions: listActions
+  ) {
     try {
-      const response = await api.get("/lists");
+      if (!selectedProjectUid) return;
+      const response = await api.get(`projects/${selectedProjectUid}/lists`);
+      // const response = await api.get("/lists");
       const lists = response.data;
       listActions.setLists(lists.data);
     } catch (error) {

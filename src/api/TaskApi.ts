@@ -109,6 +109,7 @@ const TaskApi = {
     taskActions.deleteAllTask(listUid);
   },
   async fetchTasks(
+    selectedProjectUid: string | null,
     taskActions: Pick<
       taskActions,
       | "findTask"
@@ -120,7 +121,10 @@ const TaskApi = {
     >
   ) {
     try {
-      const response = await api.get("tasks");
+      // const response = await api.get("tasks");
+
+      if (!selectedProjectUid) return;
+      const response = await api.get(`projects/${selectedProjectUid}/tasks`);
       const tasks = response.data;
       taskActions.setTasks(tasks.data);
     } catch (error) {

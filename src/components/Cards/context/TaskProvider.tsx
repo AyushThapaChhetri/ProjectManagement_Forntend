@@ -6,8 +6,11 @@ import { taskReducer } from "../reducer/reducer";
 import type { List, Task } from "../reducer/task.types";
 import ListApi from "@/api/ListApi";
 import TaskApi from "@/api/TaskApi";
+import { useProjectContext } from "@/hooks/userProjectContext";
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
+  const { state: projectState } = useProjectContext();
+
   const [state, dispatch] = useReducer(taskReducer, initialState, () => {
     const localData = localStorage.getItem("localStorageItem");
     return localData ? JSON.parse(localData) : initialState;
@@ -136,44 +139,30 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    ListApi.fetchLists({
-      addList,
-      updateList,
-      deleteList,
-      deleteProjectList,
-      setLists,
-    });
-    TaskApi.fetchTasks({
-      findTask,
-      addTask,
-      updateTask,
-      deleteTask,
-      deleteAllTask,
-      setTasks,
-    });
-  }, []);
+    if (projectState.selectedProjectUid) {
+      ListApi.fetchLists(projectState.selectedProjectUid, {
+        addList,
+        updateList,
+        deleteList,
+        deleteProjectList,
+        setLists,
+      });
+      TaskApi.fetchTasks(projectState.selectedProjectUid, {
+        findTask,
+        addTask,
+        updateTask,
+        deleteTask,
+        deleteAllTask,
+        setTasks,
+      });
+    }
+  }, [projectState.selectedProjectUid]);
   useEffect(() => {
     localStorage.setItem("localStorageItem", JSON.stringify(state));
   }, [state]);
 
   return (
     <TaskContext.Provider
-      // value={{
-      //   state,
-      //   dispatch,
-      //   activeTask,
-      //   selectTask,
-      //   addTask,
-      //   updateTask,
-      //   deleteTask,
-      //   deleteAllTask,
-      //   activeList,
-      //   selectList,
-      //   addList,
-      //   updateList,
-      //   deleteList,
-      //   onDrop,
-      // }}
       value={{
         state,
         dispatch,
