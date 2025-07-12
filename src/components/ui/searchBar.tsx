@@ -11,7 +11,7 @@ interface InputWithKbdProps {
 }
 
 export const InputWithKbd = ({
-  width,
+  width = "auto",
   placeholder,
   onChange,
   value,

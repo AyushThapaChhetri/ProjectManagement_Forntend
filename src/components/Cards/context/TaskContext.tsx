@@ -13,6 +13,7 @@ export interface TaskContextType {
     state: AppState;
     findTask: (taskId: string) => void;
     addTask: (newTask: Task) => void;
+    editTask: (taskId: string, task: Partial<Task>) => void;
     updateTask: (taskId: string, task: Partial<Task>) => void;
     deleteTask: (taskId: string) => void;
     deleteAllTask: (listId: string) => void;

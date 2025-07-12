@@ -17,30 +17,20 @@ const TaskApi = {
     const newTask: Task = {
       id: `temp-${Date.now()}`, // Temporary ID; replace with backend ID
       listUid: listUid,
-      uid: "", // Generates a UUID
-      projectUid: projectUid, // Example; adjust as needed
+      uid: "",
+      projectUid: projectUid,
       name: "",
       priority: "low",
       status: "todo",
-      createdAt: new Date(Date.now()).toISOString(),
-      updatedAt: new Date(Date.now()).toISOString(),
+      createdAt: "",
+      updatedAt: "",
       isEditing: true,
     };
-    // console.log("Creating task:", newTask);
+    console.log("Creating task:", newTask);
     taskActions.addTask(newTask);
     // Example: return await axios.post("/tasks", payload);
   },
 
-  // async getTasks(listId: string) {
-  //   console.log("Fetching tasks for listId:", listId);
-  //   // Example: return await axios.get(`/tasks?listId=${listId}`);
-  // },
-
-  // async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
-
-  //   // console.log("Updating task:", task);
-  //   taskActions.updateTask(id, task);
-  // },
   async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
     const currentTask = taskActions.state.tasks.find((t) => t.id === id);
     if (!currentTask) return;
@@ -56,8 +46,9 @@ const TaskApi = {
             status: currentTask.status,
           });
           const serverTask = response.data.data;
+          console.log("From", serverTask);
           // Replace temporary task with server task
-          taskActions.updateTask(id, {
+          taskActions.editTask(id, {
             ...serverTask,
             isEditing: false,
           });
@@ -72,15 +63,29 @@ const TaskApi = {
           throw error;
         }
       }
-    } else {
-      // Update existing server task
-      try {
-        await api.patch(`/tasks/${currentTask.uid}`, task);
-        taskActions.updateTask(id, task);
-      } catch (error) {
-        console.error("Failed to update task:", error);
-        throw error;
-      }
+    }
+    // else {
+    //   // Update existing server task
+    //   try {
+    //     await api.patch(`/tasks/${currentTask.uid}`, task);
+    //     taskActions.updateTask(id, task);
+    //   } catch (error) {
+    //     console.error("Failed to update task:", error);
+    //     throw error;
+    //   }
+    // }
+  },
+
+  async updateTask(uid: string, task: Partial<Task>, taskActions: taskActions) {
+    try {
+      const response = await api.patch(`/tasks/${uid}`, task);
+      const serverTask = response.data.data;
+      console.log("From server after updation", serverTask);
+      // Replace temporary task with server task
+      taskActions.updateTask(serverTask.uid, serverTask);
+    } catch (error) {
+      console.error("Failed to update task on server:", error);
+      throw error;
     }
   },
   async deleteTask(id: string, taskActions: taskActions) {

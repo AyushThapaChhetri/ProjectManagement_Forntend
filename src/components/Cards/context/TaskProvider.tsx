@@ -37,8 +37,21 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "ADD_TASK", payload: newTask });
   };
 
-  const updateTask = (taskId: string, task: Partial<Task>) => {
-    dispatch({ type: "UPDATE_TASK", payload: { id: taskId, updates: task } });
+  const editTask = (taskId: string, task: Partial<Task>) => {
+    const updates = { ...task }; // shallow copy
+
+    // Remove keys
+    delete updates.id;
+    delete updates.isEditing;
+
+    dispatch({
+      type: "EDIT_TASK",
+      payload: { id: taskId, updates: updates },
+    });
+  };
+
+  const updateTask = (taskUid: string, task: Partial<Task>) => {
+    dispatch({ type: "UPDATE_TASK", payload: { uid: taskUid, updates: task } });
   };
 
   const deleteTask = (taskId: string) => {
@@ -175,6 +188,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
           state,
           findTask,
           addTask,
+          editTask,
           updateTask,
           deleteTask,
           deleteAllTask,

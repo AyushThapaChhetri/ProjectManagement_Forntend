@@ -10,13 +10,17 @@ import {
   Heading,
   HStack,
   Icon,
+  Input,
+  List,
   // Menu,
   Portal,
   Select,
+  Spinner,
+  Tag,
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { FaRegEdit } from "react-icons/fa";
 import type { Task } from "./reducer/task.types";
@@ -35,6 +39,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import type { InferType } from "yup";
 import { handleApiError } from "@/utils/handleApiError";
 import { toast } from "react-toastify";
+import { fetchUsersToAssignTask } from "@/api/UserApi";
+import { useDebounce } from "@/hooks/useDebounce";
 type FormValues = InferType<typeof TaskSchema>;
 
 // import { Controller } from "react-hook-form";
@@ -50,6 +56,21 @@ interface TaskEditProps {
   setShowCheckBox?: React.Dispatch<React.SetStateAction<boolean>>;
   task: Task;
   listName: string;
+}
+
+export interface AssignableUser {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  dob: string;
+  address?: string | null;
+  phone?: string | null;
+  title?: string | null;
+  avatarUrl?: string | null;
+  createdAt: string;
+  roles: string[];
 }
 
 const priorities = createListCollection({
@@ -90,6 +111,61 @@ const TaskEdit = ({
   //   }));
   // };
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [suggestions, setSuggestions] = useState<AssignableUser[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<AssignableUser[]>([]);
+  const [selectedUserSet, setSelectedUserSet] = useState(new Set());
+  const inputRef = useRef<HTMLInputElement>(null);
+  const debouncedSearch = useDebounce(searchInput);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    if (searchInput.trim() !== "") {
+      setIsLoadingUsers(true);
+    }
+  }, [searchInput]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      // if (searchInput.trim() === "") {
+      if (debouncedSearch.trim() === "") {
+        setSuggestions([]);
+        setIsLoadingUsers(false);
+        return;
+      }
+
+      try {
+        // const response = await fetchUsersToAssignTask(searchInput);
+        const response = await fetchUsersToAssignTask(debouncedSearch);
+        setSuggestions(response);
+      } catch (error: unknown) {
+        handleApiError(error);
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+    // }, [searchInput]);
+  }, [debouncedSearch]);
+
+  const handleSelectUser = (user: AssignableUser) => {
+    setSelectedUsers([...selectedUsers, user]);
+    setSelectedUserSet(new Set([...selectedUserSet, user.email]));
+    setSearchInput("");
+    setSuggestions([]);
+    inputRef.current?.focus();
+  };
+
+  const handleRemoveUser = (user: AssignableUser) => {
+    const updatedUsers = selectedUsers.filter(
+      (selectedUser) => selectedUser.uid !== user.uid
+    );
+    setSelectedUsers(updatedUsers);
+    const updatedEmails = new Set(selectedUserSet);
+    updatedEmails.delete(user.email);
+    setSelectedUserSet(updatedEmails);
+  };
 
   const handleOpenChange = (details: DialogOpenChangeDetails) => {
     const newOpenState = details.open;
@@ -114,6 +190,7 @@ const TaskEdit = ({
     register,
     handleSubmit,
     formState: { errors },
+    // watch,
     // reset,
     // } = useForm<FormValues>();
   } = useForm({
@@ -128,23 +205,38 @@ const TaskEdit = ({
     },
   });
 
+  // watch all values and errors for debugging
+  // useEffect(() => {
+  //   console.log("Form values:", watch());
+  //   console.log("Validation errors:", errors);
+  // }, [watch(), errors]);
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     // const finalData = {
     //   ...data,
     //   dob: data.dob instanceof Date ? data.dob.toISOString() : data.dob,
     // };
+    const assignedToUidArray = selectedUsers.map(
+      (selectedUser) => selectedUser.uid
+    );
+    const finalData = {
+      ...data,
+      assignedToUid:
+        assignedToUidArray.length > 0 ? assignedToUidArray : undefined,
+    };
     handleSetShowCheckBox();
+
     try {
-      await TaskApi.editTask(task.id, data, taskActions);
+      await TaskApi.updateTask(task.uid, finalData, taskActions);
     } catch (error: unknown) {
       toast.error("Error");
       handleApiError(error);
     }
-    // console.log("Form is submitting..."); // This should log
-    // console.log(data); // Your final form data
-    // console.log("Id's of task and list", task.id, task.listId);
 
-    // reset();
+    console.log("Form is submitting...");
+    console.log(data);
+    console.log("Final data", finalData);
+    // console.log("Id's of task and list", task.id, task.listId);
   };
   // console.log("Errors from RHF", errors);
   return (
@@ -216,6 +308,83 @@ const TaskEdit = ({
                         {errors.description?.message}
                       </Field.ErrorText>
                     </Field.Root>
+                    <Flex>
+                      <Field.Root>
+                        <Field.Label>Assign Task To</Field.Label>
+                        <Flex gap={3} wrap={"wrap"}>
+                          {selectedUsers.map((user) => {
+                            return (
+                              <Tag.Root key={user.email} colorPalette={"pink"}>
+                                <Tag.Label>
+                                  {user.firstName} {user.lastName}
+                                </Tag.Label>
+                                <Tag.EndElement>
+                                  <Tag.CloseTrigger
+                                    onClick={() => {
+                                      handleRemoveUser(user);
+                                    }}
+                                  />
+                                </Tag.EndElement>
+                              </Tag.Root>
+                            );
+                          })}
+                        </Flex>
+                        <Input
+                          ref={inputRef}
+                          placeholder="Search For User..."
+                          value={searchInput}
+                          onChange={(e) => {
+                            setSearchInput(e.target.value);
+                          }}
+                        />
+
+                        {isLoadingUsers ? (
+                          <Flex justify="center" align="center" py={4} pl={2}>
+                            <Spinner size="md" color="blue.500" />
+                          </Flex>
+                        ) : (
+                          <List.Root
+                            as="ul"
+                            listStyle="none"
+                            maxH={"300px"}
+                            w={"100%"}
+                            border={
+                              suggestions.length > 0 ? "1px solid #ccc" : "none"
+                            }
+                            bg={"gray.100"}
+                            overflowY={"auto"}
+                            p={0}
+                            m={0}
+                          >
+                            {suggestions?.map((user) => {
+                              return !selectedUserSet.has(user.email) ? (
+                                <List.Item
+                                  key={user.email}
+                                  display={"flex"}
+                                  alignItems={"center"}
+                                  gap={"10px"}
+                                  p={"8px 10px"}
+                                  cursor={"pointer"}
+                                  borderBottom={"#ccc"}
+                                  borderWidth={"1px"}
+                                  _hover={{
+                                    bg: "#ccc",
+                                  }}
+                                  onClick={() => handleSelectUser(user)}
+                                  // _marker={{ color: "inherit" }}
+                                >
+                                  <span>
+                                    {user.firstName} {user.lastName}
+                                  </span>
+                                </List.Item>
+                              ) : null;
+                            })}
+                          </List.Root>
+                        )}
+                        {/* <Input placeholder="Type To assign..." {...register("assignedUser")}/> */}
+                        <Field.ErrorText />
+                      </Field.Root>
+                    </Flex>
                     <HStack>
                       <Controller
                         name="priority"
@@ -353,6 +522,11 @@ const TaskEdit = ({
                             />
                           )}
                         />
+                        {errors.startDate && (
+                          <Text color="red" fontWeight="medium" fontSize="xs">
+                            {errors.startDate.message}
+                          </Text>
+                        )}
                       </Flex>
                       <Flex direction="column" gap={2} w={"50%"}>
                         <Text as="h3" fontWeight="medium">
@@ -377,6 +551,12 @@ const TaskEdit = ({
                             />
                           )}
                         />
+                        {/* Show error message if exists */}
+                        {errors.endDate && (
+                          <Text color="red" fontWeight="medium" fontSize="xs">
+                            {errors.endDate.message}
+                          </Text>
+                        )}
                       </Flex>
                     </HStack>
                   </Flex>
@@ -387,14 +567,6 @@ const TaskEdit = ({
                       Cancel
                     </Button>
                   </Dialog.ActionTrigger>
-                  {/* <Dialog.ActionTrigger asChild>
-                    <Button type="submit" colorScheme="blue">
-                      Save
-                    </Button>
-                  </Dialog.ActionTrigger> */}
-                  {/* <Button type="submit" >
-                    Save
-                  </Button> */}
 
                   <Button
                     bgColor="#6822ef"

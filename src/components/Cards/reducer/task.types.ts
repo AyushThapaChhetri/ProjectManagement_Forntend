@@ -46,7 +46,7 @@ export interface Task {
   startDate?: string;
   endDate?: string;
   estimatedHours?: number;
-  assignedToId?: number;
+  assignedToUid?: string[];
   createdAt: string;
   updatedAt: string;
   isEditing: boolean;
@@ -92,7 +92,8 @@ export type TaskAction =
   | { type: "FIND_TASK"; payload: { id: string } }
   | { type: "SET_TASKS"; payload: Task[] }
   | { type: "ADD_TASK"; payload: Task }
-  | { type: "UPDATE_TASK"; payload: { id: string; updates: Partial<Task> } }
+  | { type: "EDIT_TASK"; payload: { id: string; updates: Partial<Task> } }
+  | { type: "UPDATE_TASK"; payload: { uid: string; updates: Partial<Task> } }
   | { type: "DELETE_TASK"; payload: { id: string } }
   | { type: "DELETE_ALL_TASK"; payload: { id: string } }
   | {

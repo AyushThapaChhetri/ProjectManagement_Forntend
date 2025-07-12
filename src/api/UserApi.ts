@@ -40,9 +40,14 @@ export const fetchUsers = async (
   }
 };
 
-// if (isFetch) {
-//   fetchTodos();
-// }
-
-//   }, [isFetch, navigate, item]);
-// }
+export const fetchUsersToAssignTask = async (searchInput: string) => {
+  try {
+    const response = await api.get(`${API_User_URL}/employee`, {
+      params: { search: searchInput },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to search Employee:", error);
+    throw error;
+  }
+};

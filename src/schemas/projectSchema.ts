@@ -22,13 +22,6 @@ export const ProjectSchema = yup.object({
         const parsed = parseISO(value);
         const now = new Date();
         const valid = parsed.getTime() >= now.getTime();
-        // console.log(
-        //   "Checking if now or future (UTC):",
-        //   value,
-        //   parsed,
-        //   now,
-        //   valid
-        // );
         return valid;
       }
     ),

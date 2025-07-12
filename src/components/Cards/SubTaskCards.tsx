@@ -190,12 +190,12 @@ const SubTaskCards = ({
           </Checkbox.Root>
         </Box>
 
-        {task.isEditing ? (
+        {task?.isEditing ? (
           <form
             onSubmit={handleSubmit}
             style={{
               width: "100%",
-              display: "contents", // ← this makes form take up same height as textarea
+              display: "contents", //  this makes form take up same height as textarea
             }}
           >
             <textarea
@@ -252,7 +252,6 @@ const SubTaskCards = ({
             }}
             onDragEnd={(e) => {
               e.stopPropagation();
-
               console.log("Drag ended for task:", task.uid);
               // selectTask(null);
             }}

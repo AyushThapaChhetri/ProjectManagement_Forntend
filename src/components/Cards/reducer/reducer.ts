@@ -82,11 +82,20 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
     }
     case "ADD_TASK":
       return { ...state, tasks: [...state.tasks, action.payload] };
-    case "UPDATE_TASK":
+    case "EDIT_TASK":
       return {
         ...state,
         tasks: state.tasks.map((task) =>
           task.id === action.payload.id
+            ? { ...task, ...action.payload.updates }
+            : task
+        ),
+      };
+    case "UPDATE_TASK":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.uid === action.payload.uid
             ? { ...task, ...action.payload.updates }
             : task
         ),
