@@ -124,11 +124,22 @@ const TaskApi = {
   },
   async getUsersByUids(taskUid: string) {
     try {
-      console.log(`Before Data: /tasks/${taskUid}/assigned_Users `);
+      // console.log(`Before Data: /tasks/${taskUid}/assigned_Users `);
       const response = await api.get(`/tasks/${taskUid}/assigned_Users`);
       const users = response.data.data.assignedToUsers;
-      console.log("From server Data: ", users);
-      return users;
+      // console.log("From server Data: ", users);
+      const mappedResponse = users.map(
+        (user: {
+          uid: string;
+          firstName: string;
+          lastName: string;
+          email: string;
+        }) => {
+          return { uid: user.uid, name: `${user.firstName} ${user.lastName}` };
+        }
+      );
+      // console.log("MappedUser: ", mappedResponse);
+      return mappedResponse;
     } catch (error) {
       console.log("Failed to fetch Assigned Users: ", error);
       throw error;

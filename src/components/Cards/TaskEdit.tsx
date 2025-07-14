@@ -130,7 +130,13 @@ const TaskEdit = ({
         if (!selectedTask) return;
 
         const users = await TaskApi.getUsersByUids(selectedTask.uid);
-        console.log("From server Data: ", users);
+        // console.log("From server Data: ", users);
+
+        setSelectedUsers(users);
+        const usersUid = users.map(
+          (user: { uid: string; name: string }) => user.uid
+        );
+        setSelectedUserSet(new Set(usersUid));
         // Optionally update selectedUsers state here
       } catch (error) {
         handleApiError(error);
@@ -253,14 +259,14 @@ const TaskEdit = ({
       handleApiError(error);
     }
 
-    console.log("Form is submitting...");
-    console.log("Final data", finalData);
+    // console.log("Form is submitting...");
+    // console.log("Final data", finalData);
     // console.log("Id's of task and list", task.id, task.listId);
   };
   // console.log("Errors from RHF", errors);
 
   const handleEditClick = () => {
-    console.log("clicked Edit: ", task.uid);
+    // console.log("clicked Edit: ", task.uid);
     TaskApi.selectTaskState(task.uid, taskActions);
   };
   return (
