@@ -74,9 +74,18 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
     case "SET_TASKS":
       return { ...state, tasks: action.payload };
 
+    case "SELECT_TASKS": {
+      const task = state.tasks.find((task) => task.uid === action.payload.uid);
+      return { ...state, selectedTask: task ?? null };
+    }
+
+    case "CLEAR_SELECTED_TASK": {
+      return { ...state, selectedTask: null };
+    }
+
     case "FIND_TASK": {
       const foundTask = state.tasks.find(
-        (task) => task.id === action.payload.id
+        (task) => task.uid === action.payload.uid
       );
       return { ...state, selectedTask: foundTask ?? null };
     }
@@ -86,7 +95,7 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
       return {
         ...state,
         tasks: state.tasks.map((task) =>
-          task.id === action.payload.id
+          task.uid === action.payload.uid
             ? { ...task, ...action.payload.updates }
             : task
         ),
@@ -103,7 +112,7 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
     case "DELETE_TASK":
       return {
         ...state,
-        tasks: state.tasks.filter((task) => task.id !== action.payload.id),
+        tasks: state.tasks.filter((task) => task.uid !== action.payload.uid),
       };
 
     case "DELETE_ALL_TASK":

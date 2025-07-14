@@ -20,11 +20,11 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [activeList, setActiveList] = useState<string | null>(null);
   // console.log("state: ", activeTask);
 
-  const findTask = (taskId: string) => {
-    dispatch({ type: "FIND_TASK", payload: { id: taskId } });
+  const findTask = (taskUid: string) => {
+    dispatch({ type: "FIND_TASK", payload: { uid: taskUid } });
   };
-  const selectTask = (taskId: string | null) => {
-    setActiveTask(taskId);
+  const selectTask = (taskUid: string | null) => {
+    setActiveTask(taskUid);
   };
   // console.log("From Provider:", activeTask);
 
@@ -37,25 +37,25 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "ADD_TASK", payload: newTask });
   };
 
-  const editTask = (taskId: string, task: Partial<Task>) => {
-    const updates = { ...task }; // shallow copy
+  // const editTask = (taskUid: string, task: Partial<Task>) => {
+  //   const updates = { ...task }; // shallow copy
 
-    // Remove keys
-    delete updates.id;
-    delete updates.isEditing;
+  //   // Remove keys
+  //   delete updates.id;
+  //   delete updates.isEditing;
 
-    dispatch({
-      type: "EDIT_TASK",
-      payload: { id: taskId, updates: updates },
-    });
-  };
+  //   dispatch({
+  //     type: "EDIT_TASK",
+  //     payload: { id: taskId, updates: updates },
+  //   });
+  // };
 
   const updateTask = (taskUid: string, task: Partial<Task>) => {
     dispatch({ type: "UPDATE_TASK", payload: { uid: taskUid, updates: task } });
   };
 
-  const deleteTask = (taskId: string) => {
-    dispatch({ type: "DELETE_TASK", payload: { id: taskId } });
+  const deleteTask = (taskUid: string) => {
+    dispatch({ type: "DELETE_TASK", payload: { uid: taskUid } });
   };
 
   const deleteAllTask = (listUid: string) => {
@@ -64,6 +64,14 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   const setTasks = (tasks: Task[]) => {
     dispatch({ type: "SET_TASKS", payload: tasks });
+  };
+
+  const selectTaskState = (taskUid: string) => {
+    dispatch({ type: "SELECT_TASKS", payload: { uid: taskUid } });
+  };
+
+  const clearSelectedTask = () => {
+    dispatch({ type: "CLEAR_SELECTED_TASK" });
   };
 
   const addList = (newList: List) => {
@@ -84,10 +92,6 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "SET_LISTS", payload: lists });
   };
 
-  // const clearState = () => {
-  //   dispatch({ type: "RESET_STATE" });
-  //   localStorage.removeItem("localStorageItem");
-  // };
   const onDrop = (position: number, listUid?: string) => {
     // console.log(
     //   `${activeTask} is going to place into ${listUid} and at the postion ${position}`
@@ -188,7 +192,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
           state,
           findTask,
           addTask,
-          editTask,
+          selectTaskState,
+          clearSelectedTask,
           updateTask,
           deleteTask,
           deleteAllTask,

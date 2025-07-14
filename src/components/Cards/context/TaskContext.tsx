@@ -7,20 +7,21 @@ export interface TaskContextType {
   state: AppState;
   dispatch: React.Dispatch<TaskAction>;
   activeTask: string | null;
-  selectTask: (taskId: string | null) => void;
+  selectTask: (taskUid: string | null) => void;
 
   taskActions: {
     state: AppState;
-    findTask: (taskId: string) => void;
+    findTask: (taskUid: string) => void;
+    selectTaskState: (taskUid: string) => void;
+    clearSelectedTask: () => void;
     addTask: (newTask: Task) => void;
-    editTask: (taskId: string, task: Partial<Task>) => void;
-    updateTask: (taskId: string, task: Partial<Task>) => void;
-    deleteTask: (taskId: string) => void;
+    updateTask: (taskUid: string, task: Partial<Task>) => void;
+    deleteTask: (taskUid: string) => void;
     deleteAllTask: (listId: string) => void;
     setTasks: (tasks: Task[]) => void;
   };
   activeList: string | null;
-  selectList: (listId: string | null) => void;
+  selectList: (listUid: string | null) => void;
 
   listActions: {
     addList: (newList: List) => void;

@@ -10,97 +10,99 @@ type taskActions = TaskContextType["taskActions"];
 
 const TaskApi = {
   async createTask(
+    taskName: string,
     listUid: string,
     projectUid: string,
     taskActions: taskActions
   ) {
-    const newTask: Task = {
-      id: `temp-${Date.now()}`, // Temporary ID; replace with backend ID
+    const newTask = {
+      name: taskName,
       listUid: listUid,
-      uid: "",
       projectUid: projectUid,
-      name: "",
       priority: "low",
       status: "todo",
-      createdAt: "",
-      updatedAt: "",
-      isEditing: true,
     };
     console.log("Creating task:", newTask);
-    taskActions.addTask(newTask);
+
+    try {
+      const response = await api.post(`/tasks`, newTask);
+      const serverTask = response.data.data;
+      console.log("From server after updation", serverTask);
+      // Replace temporary task with server task
+      taskActions.addTask(serverTask);
+    } catch (error) {
+      console.error("Failed to create task on server:", error);
+      throw error;
+    }
     // Example: return await axios.post("/tasks", payload);
   },
 
-  async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
-    const currentTask = taskActions.state.tasks.find((t) => t.id === id);
-    if (!currentTask) return;
+  // async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
+  //   const currentTask = taskActions.state.tasks.find((t) => t.id === id);
+  //   if (!currentTask) return;
 
-    if (currentTask.isEditing) {
-      if (task.name && task.name.trim() !== "") {
-        try {
-          const response = await api.post("/tasks", {
-            listUid: currentTask.listUid,
-            projectUid: currentTask.projectUid,
-            name: task.name,
-            priority: currentTask.priority,
-            status: currentTask.status,
-          });
-          const serverTask = response.data.data;
-          console.log("From", serverTask);
-          // Replace temporary task with server task
-          taskActions.editTask(id, {
-            ...serverTask,
-            isEditing: false,
-          });
-          // Create new temporary task
-          this.createTask(
-            currentTask.listUid,
-            currentTask.projectUid,
-            taskActions
-          );
-        } catch (error) {
-          console.error("Failed to create task on server:", error);
-          throw error;
-        }
-      }
-    }
-    // else {
-    //   // Update existing server task
-    //   try {
-    //     await api.patch(`/tasks/${currentTask.uid}`, task);
-    //     taskActions.updateTask(id, task);
-    //   } catch (error) {
-    //     console.error("Failed to update task:", error);
-    //     throw error;
-    //   }
-    // }
-  },
+  //   if (currentTask.isEditing) {
+  //     if (task.name && task.name.trim() !== "") {
+  //       try {
+  //         const response = await api.post("/tasks", {
+  //           listUid: currentTask.listUid,
+  //           projectUid: currentTask.projectUid,
+  //           name: task.name,
+  //           priority: currentTask.priority,
+  //           status: currentTask.status,
+  //         });
+  //         const serverTask = response.data.data;
+  //         console.log("From", serverTask);
+  //         // Replace temporary task with server task
+  //         taskActions.editTask(id, {
+  //           ...serverTask,
+  //           isEditing: false,
+  //         });
+  //         // Create new temporary task
+  //         this.createTask(
+  //           currentTask.listUid,
+  //           currentTask.projectUid,
+  //           taskActions
+  //         );
+  //       } catch (error) {
+  //         console.error("Failed to create task on server:", error);
+  //         throw error;
+  //       }
+  //     }
+  //   }
+  // else {
+  //   // Update existing server task
+  //   try {
+  //     await api.patch(`/tasks/${currentTask.uid}`, task);
+  //     taskActions.updateTask(id, task);
+  //   } catch (error) {
+  //     console.error("Failed to update task:", error);
+  //     throw error;
+  //   }
+  // }
+  // },
 
   async updateTask(uid: string, task: Partial<Task>, taskActions: taskActions) {
     try {
       const response = await api.patch(`/tasks/${uid}`, task);
       const serverTask = response.data.data;
       console.log("From server after updation", serverTask);
-      // Replace temporary task with server task
+      // // Replace temporary task with server task
       taskActions.updateTask(serverTask.uid, serverTask);
+      console.log("Updation datas", task);
     } catch (error) {
       console.error("Failed to update task on server:", error);
       throw error;
     }
   },
-  async deleteTask(id: string, taskActions: taskActions) {
-    const task = taskActions.state.tasks.find((t) => t.id === id);
-    if (!task) return;
-
-    if (!task.isEditing) {
-      try {
-        await api.delete(`/tasks/${task.uid}`);
-      } catch (error) {
-        console.error("Failed to delete task from server:", error);
-        throw error;
-      }
+  async deleteTask(uid: string, taskActions: taskActions) {
+    try {
+      await api.delete(`/tasks/${uid}`);
+      taskActions.deleteTask(uid);
+    } catch (error) {
+      console.error("Failed to delete task from server:", error);
+      throw error;
     }
-    taskActions.deleteTask(id);
   },
 
   async deleteAllTask(listUid: string, taskActions: taskActions) {
@@ -112,6 +114,25 @@ const TaskApi = {
       throw error;
     }
     taskActions.deleteAllTask(listUid);
+  },
+
+  async selectTaskState(taskUid: string, taskActions: taskActions) {
+    taskActions.selectTaskState(taskUid);
+  },
+  async clearSelectedTask(taskActions: taskActions) {
+    taskActions.clearSelectedTask();
+  },
+  async getUsersByUids(taskUid: string) {
+    try {
+      console.log(`Before Data: /tasks/${taskUid}/assigned_Users `);
+      const response = await api.get(`/tasks/${taskUid}/assigned_Users`);
+      const users = response.data.data.assignedToUsers;
+      console.log("From server Data: ", users);
+      return users;
+    } catch (error) {
+      console.log("Failed to fetch Assigned Users: ", error);
+      throw error;
+    }
   },
   async fetchTasks(
     selectedProjectUid: string | null,
@@ -131,6 +152,7 @@ const TaskApi = {
       if (!selectedProjectUid) return;
       const response = await api.get(`projects/${selectedProjectUid}/tasks`);
       const tasks = response.data;
+      console.log("Fetch from apis: ", tasks);
       taskActions.setTasks(tasks.data);
     } catch (error) {
       console.log("Failed to fetch Tasks: ", error);

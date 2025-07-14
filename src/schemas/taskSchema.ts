@@ -12,7 +12,10 @@ export const optionalTrimmedString = () =>
     .trim()
     // .nullable()
     // .transform((value) => (value === "" ? undefined : value))
-    .transform((value) => (value === "" ? undefined : value))
+    .transform((value) => {
+      // Handle both null and empty string
+      return value === null || value === "" ? undefined : value.trim();
+    })
     .optional();
 export const optionalTrimmedNumber = () =>
   yup
@@ -21,6 +24,17 @@ export const optionalTrimmedNumber = () =>
       originalValue === "" ? undefined : value
     )
     .optional();
+
+export const TaskTitleSchema = yup.object({
+  name: yup
+    .string()
+    .trim()
+    .optional()
+    .test("min-if-not-empty", "Must be at least 3 characters long", (value) => {
+      if (!value || value === "") return true; // allow blank
+      return value.length >= 3;
+    }),
+});
 
 export const TaskSchema = yup.object({
   name: yup.string().required(),

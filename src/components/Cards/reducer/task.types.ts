@@ -34,8 +34,25 @@ export interface List {
   isEditing: boolean;
 }
 
+// export interface Task {
+//   id: string;
+//   listUid: string;
+//   uid: string;
+//   projectUid: string;
+//   name: string;
+//   description?: string;
+//   priority: Priority;
+//   status: Status;
+//   startDate?: string;
+//   endDate?: string;
+//   estimatedHours?: number;
+//   assignedToUid?: string[];
+//   createdAt: string;
+//   updatedAt: string;
+//   isEditing: boolean;
+// }
 export interface Task {
-  id: string;
+  // id: string;
   listUid: string;
   uid: string;
   projectUid: string;
@@ -46,10 +63,10 @@ export interface Task {
   startDate?: string;
   endDate?: string;
   estimatedHours?: number;
-  assignedToUid?: string[];
+  assignedToUsers?: string[];
   createdAt: string;
   updatedAt: string;
-  isEditing: boolean;
+  // isEditing: boolean;
 }
 
 export interface AppState {
@@ -89,12 +106,14 @@ export interface AppState {
 //     };
 
 export type TaskAction =
-  | { type: "FIND_TASK"; payload: { id: string } }
+  | { type: "FIND_TASK"; payload: { uid: string } }
   | { type: "SET_TASKS"; payload: Task[] }
+  | { type: "SELECT_TASKS"; payload: { uid: string } }
+  | { type: "CLEAR_SELECTED_TASK" }
   | { type: "ADD_TASK"; payload: Task }
-  | { type: "EDIT_TASK"; payload: { id: string; updates: Partial<Task> } }
+  | { type: "EDIT_TASK"; payload: { uid: string; updates: Partial<Task> } }
   | { type: "UPDATE_TASK"; payload: { uid: string; updates: Partial<Task> } }
-  | { type: "DELETE_TASK"; payload: { id: string } }
+  | { type: "DELETE_TASK"; payload: { uid: string } }
   | { type: "DELETE_ALL_TASK"; payload: { id: string } }
   | {
       type: "MOVE_TASK";

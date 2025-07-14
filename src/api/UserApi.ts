@@ -2,6 +2,21 @@ import axios from "axios";
 import api from "./Api";
 import type { NavigateFunction } from "react-router";
 
+export interface AssignableUser {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  dob: string;
+  address?: string | null;
+  phone?: string | null;
+  title?: string | null;
+  avatarUrl?: string | null;
+  createdAt: string;
+  roles: string[];
+}
+
 const API_User_URL = "user";
 
 export const fetchUsers = async (
@@ -45,7 +60,11 @@ export const fetchUsersToAssignTask = async (searchInput: string) => {
     const response = await api.get(`${API_User_URL}/employee`, {
       params: { search: searchInput },
     });
-    return response.data.data;
+    const responseForFrontend = response.data.data;
+    const mappedResponse = responseForFrontend.map((user: AssignableUser) => {
+      return { uid: user.uid, name: `${user.firstName} ${user.lastName}` };
+    });
+    return mappedResponse;
   } catch (error) {
     console.error("Failed to search Employee:", error);
     throw error;

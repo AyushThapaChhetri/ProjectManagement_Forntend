@@ -9,7 +9,14 @@ import {
 import { IoMdAdd } from "react-icons/io";
 import SubTaskCards from "./SubTaskCards";
 import { type List, type Task } from "./reducer/task.types";
-import React, { useCallback, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from "react";
 import OptionDialog from "./OptionDialog";
 import TaskApi from "@/api/TaskApi";
 import { useTaskContext } from "@/hooks/useTaskContext";
@@ -20,7 +27,9 @@ import type { InferType } from "yup";
 import TaskDropArea from "./TaskDropArea";
 import ListApi from "@/api/ListApi";
 import { handleApiError } from "@/utils/handleApiError";
+import { TaskTitleSchema } from "@/schemas/taskSchema";
 type FormValues = InferType<typeof listSchema>;
+type TaskTitleForm = InferType<typeof TaskTitleSchema>;
 
 interface CardsProps {
   uid: List["uid"];
@@ -44,9 +53,11 @@ const Cards = React.memo(
     onDragStartCallback,
     onDragEndCallback,
   }: CardsProps) => {
+    const [showNewInput, setShowNewInput] = useState(false);
     const { selectList, selectTask, taskActions, listActions, onDrop } =
       useTaskContext();
     const localCardRef = useRef<HTMLDivElement>(null);
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const setCombinedRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -63,13 +74,94 @@ const Cards = React.memo(
       [innerRef]
     );
 
+    // Add this useEffect hook
+    useEffect(() => {
+      // if (task.isEditing && textAreaRef.current) {
+      if (showNewInput && textAreaRef.current) {
+        const textarea = textAreaRef.current;
+        requestAnimationFrame(() => {
+          textarea.style.height = "auto";
+          const newHeight = Math.max(textarea.scrollHeight, 40); // Minimum height
+
+          if (newHeight < 160) {
+            textarea.style.height = `${newHeight}px`;
+          } else {
+            textarea.style.height = "160px";
+          }
+
+          textarea.scrollIntoView({ behavior: "smooth", block: "end" });
+        });
+      }
+      // }, [task.isEditing]);
+    }, [showNewInput]);
+
     // console.log("Current state in Cards component:", state);
 
     const handleAddTask = () => {
-      TaskApi.createTask(uid, projectUid, taskActions);
+      console.log("Task type form opened ");
+      setShowNewInput(true);
+      // Wait for textarea to render
+      setTimeout(() => {
+        textAreaRef.current?.focus();
+      }, 0);
+      // TaskApi.createTask(uid, projectUid, taskActions);
     };
     // Filter tasks to only show those belonging to this specific list
     const listTasks = tasks.filter((task) => task.listUid === uid);
+
+    const {
+      register: registerTask,
+      handleSubmit: handleTaskSubmit,
+      reset: resetTaskForm,
+      // formState: { errors: taskErrors },
+    } = useForm({
+      resolver: yupResolver(TaskTitleSchema),
+    });
+
+    const handleTaskSubmitFn: SubmitHandler<TaskTitleForm> = async (data) => {
+      const trimmed = (data.name ?? "").trim();
+      if (trimmed === "") {
+        // TaskApi.deleteTask(task.uid, taskActions);
+        setShowNewInput(false);
+        return;
+      } else {
+        try {
+          await TaskApi.createTask(trimmed, uid, projectUid, taskActions);
+          resetTaskForm();
+        } catch (error: unknown) {
+          handleApiError(error);
+        }
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); // prevent newline
+        handleTaskSubmit(handleTaskSubmitFn)();
+      }
+    };
+
+    // const handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
+    const handleBlur = () => {
+      handleTaskSubmit(handleTaskSubmitFn)();
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const textarea = e.target;
+
+      // Always reset height first
+      textarea.style.height = "auto";
+      const newHeight = textarea.scrollHeight;
+
+      // Apply calculated height
+      if (newHeight < 160) {
+        textarea.style.height = `${newHeight}px`;
+        textarea.style.overflowY = "hidden";
+      } else {
+        textarea.style.height = "160px";
+        textarea.style.overflowY = "auto";
+      }
+    };
 
     const {
       // register,
@@ -79,11 +171,12 @@ const Cards = React.memo(
     } = useForm({
       resolver: yupResolver(listSchema),
     });
-    const onSubmit: SubmitHandler<FormValues> = (data) => {
+
+    const onSubmit: SubmitHandler<FormValues> = async (data) => {
       // console.log("Form is submitting..."); // This should log
       // console.log(data.name); // Your final form data
       try {
-        ListApi.updateList(uid, data.name, listActions);
+        await ListApi.updateList(uid, data.name, listActions);
         // toast.success(`Successfully Updated List`);
       } catch (error: unknown) {
         handleApiError(error);
@@ -231,6 +324,61 @@ const Cards = React.memo(
                   />
                 </React.Fragment>
               ))}
+
+            {showNewInput && (
+              <form
+                onSubmit={handleTaskSubmit(handleTaskSubmitFn)}
+                style={{
+                  width: "100%",
+                  display: "contents", // So the form doesn't affect layout
+                }}
+              >
+                {(() => {
+                  const { ref, onBlur, onChange, name, ...rest } =
+                    registerTask("name");
+
+                  return (
+                    <textarea
+                      name={name}
+                      {...rest}
+                      ref={(e) => {
+                        ref(e); // RHF internal ref
+                        textAreaRef.current = e; // your custom logic
+                      }}
+                      onChange={(e) => {
+                        handleChange(e); // your custom height logic
+                        onChange(e); // RHF form sync
+                      }}
+                      onBlur={(e) => {
+                        onBlur(e); // RHF blur
+                        handleBlur(); // your custom blur logic
+                      }}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                      style={{
+                        width: "100%",
+                        // border: "none",
+                        outline: "none",
+                        borderRadius: "5px",
+                        maxHeight: "160px",
+                        resize: "none",
+                        fontSize: "16px",
+                        overflowY: "auto",
+                        wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
+                        padding: "8px",
+                        position: "relative",
+                        zIndex: 1,
+                        boxSizing: "border-box",
+                        minHeight: "40px",
+                        transition: "height 0.2s ease",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  );
+                })()}
+              </form>
+            )}
           </Flex>
 
           <Flex

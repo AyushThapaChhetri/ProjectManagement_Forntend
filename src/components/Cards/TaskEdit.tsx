@@ -43,6 +43,11 @@ import { fetchUsersToAssignTask } from "@/api/UserApi";
 import { useDebounce } from "@/hooks/useDebounce";
 type FormValues = InferType<typeof TaskSchema>;
 
+interface UserSuggest {
+  uid: string;
+  name: string;
+}
+
 // import { Controller } from "react-hook-form";
 
 // Assuming this interface is defined in task.types.ts as previously discussed
@@ -56,21 +61,6 @@ interface TaskEditProps {
   setShowCheckBox?: React.Dispatch<React.SetStateAction<boolean>>;
   task: Task;
   listName: string;
-}
-
-export interface AssignableUser {
-  uid: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: string;
-  dob: string;
-  address?: string | null;
-  phone?: string | null;
-  title?: string | null;
-  avatarUrl?: string | null;
-  createdAt: string;
-  roles: string[];
 }
 
 const priorities = createListCollection({
@@ -112,8 +102,8 @@ const TaskEdit = ({
   // };
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [suggestions, setSuggestions] = useState<AssignableUser[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<AssignableUser[]>([]);
+  const [suggestions, setSuggestions] = useState<UserSuggest[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserSuggest[]>([]);
   const [selectedUserSet, setSelectedUserSet] = useState(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
   const debouncedSearch = useDebounce(searchInput);
@@ -124,6 +114,33 @@ const TaskEdit = ({
       setIsLoadingUsers(true);
     }
   }, [searchInput]);
+
+  // const currentTaskUid = task.uid;
+
+  // when dialog opens fetch the Assigned user from the backend
+  useEffect(() => {
+    const fetchAssignedUsers = async () => {
+      const local = localStorage.getItem("localStorageItem");
+      if (!local) return;
+
+      try {
+        const parsed = JSON.parse(local);
+        const selectedTask = parsed.selectedTask;
+
+        if (!selectedTask) return;
+
+        const users = await TaskApi.getUsersByUids(selectedTask.uid);
+        console.log("From server Data: ", users);
+        // Optionally update selectedUsers state here
+      } catch (error) {
+        handleApiError(error);
+      }
+    };
+
+    if (isDialogOpen) {
+      fetchAssignedUsers();
+    }
+  }, [isDialogOpen]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -149,22 +166,22 @@ const TaskEdit = ({
     // }, [searchInput]);
   }, [debouncedSearch]);
 
-  const handleSelectUser = (user: AssignableUser) => {
+  const handleSelectUser = (user: UserSuggest) => {
     setSelectedUsers([...selectedUsers, user]);
-    setSelectedUserSet(new Set([...selectedUserSet, user.email]));
+    setSelectedUserSet(new Set([...selectedUserSet, user.uid]));
     setSearchInput("");
     setSuggestions([]);
     inputRef.current?.focus();
   };
 
-  const handleRemoveUser = (user: AssignableUser) => {
+  const handleRemoveUser = (user: UserSuggest) => {
     const updatedUsers = selectedUsers.filter(
       (selectedUser) => selectedUser.uid !== user.uid
     );
     setSelectedUsers(updatedUsers);
-    const updatedEmails = new Set(selectedUserSet);
-    updatedEmails.delete(user.email);
-    setSelectedUserSet(updatedEmails);
+    const updatedUids = new Set(selectedUserSet);
+    updatedUids.delete(user.uid);
+    setSelectedUserSet(updatedUids);
   };
 
   const handleOpenChange = (details: DialogOpenChangeDetails) => {
@@ -181,6 +198,9 @@ const TaskEdit = ({
   const handleSetShowCheckBox = () => {
     setShowCheckBox?.(false);
     onDialogStateChange?.(false);
+
+    //Clearing the locolstorage selectedTask
+    TaskApi.clearSelectedTask(taskActions);
   };
 
   // console.log("Task Details: ", task);
@@ -221,11 +241,11 @@ const TaskEdit = ({
     );
     const finalData = {
       ...data,
-      assignedToUid:
+      assignedToUsers:
         assignedToUidArray.length > 0 ? assignedToUidArray : undefined,
     };
     handleSetShowCheckBox();
-
+    // console.log("From task Edit final Data: ", finalData);
     try {
       await TaskApi.updateTask(task.uid, finalData, taskActions);
     } catch (error: unknown) {
@@ -234,11 +254,15 @@ const TaskEdit = ({
     }
 
     console.log("Form is submitting...");
-    console.log(data);
     console.log("Final data", finalData);
     // console.log("Id's of task and list", task.id, task.listId);
   };
   // console.log("Errors from RHF", errors);
+
+  const handleEditClick = () => {
+    console.log("clicked Edit: ", task.uid);
+    TaskApi.selectTaskState(task.uid, taskActions);
+  };
   return (
     <>
       {/* <Dialog.Root size={"lg"} > */}
@@ -250,7 +274,7 @@ const TaskEdit = ({
         onInteractOutside={handleSetShowCheckBox}
       >
         <Dialog.Trigger asChild>
-          <FaRegEdit size={18} />
+          <FaRegEdit size={18} onClick={handleEditClick} />
         </Dialog.Trigger>
         <Portal>
           <Dialog.Backdrop />
@@ -314,9 +338,10 @@ const TaskEdit = ({
                         <Flex gap={3} wrap={"wrap"}>
                           {selectedUsers.map((user) => {
                             return (
-                              <Tag.Root key={user.email} colorPalette={"pink"}>
+                              <Tag.Root key={user.uid} colorPalette={"pink"}>
                                 <Tag.Label>
-                                  {user.firstName} {user.lastName}
+                                  {/* {user.firstName} {user.lastName} */}
+                                  {user.name}
                                 </Tag.Label>
                                 <Tag.EndElement>
                                   <Tag.CloseTrigger
@@ -357,9 +382,9 @@ const TaskEdit = ({
                             m={0}
                           >
                             {suggestions?.map((user) => {
-                              return !selectedUserSet.has(user.email) ? (
+                              return !selectedUserSet.has(user.uid) ? (
                                 <List.Item
-                                  key={user.email}
+                                  key={user.uid}
                                   display={"flex"}
                                   alignItems={"center"}
                                   gap={"10px"}
@@ -374,7 +399,8 @@ const TaskEdit = ({
                                   // _marker={{ color: "inherit" }}
                                 >
                                   <span>
-                                    {user.firstName} {user.lastName}
+                                    {/* {user.firstName} {user.lastName} */}
+                                    {user.name}
                                   </span>
                                 </List.Item>
                               ) : null;
