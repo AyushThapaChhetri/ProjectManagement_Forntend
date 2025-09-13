@@ -22,12 +22,12 @@ const TaskApi = {
       priority: "low",
       status: "todo",
     };
-    console.log("Creating task:", newTask);
+    // console.log("Creating task:", newTask);
 
     try {
       const response = await api.post(`/tasks`, newTask);
       const serverTask = response.data.data;
-      console.log("From server after updation", serverTask);
+      // console.log("From server after updation", serverTask);
       // Replace temporary task with server task
       taskActions.addTask(serverTask);
     } catch (error) {
@@ -36,51 +36,6 @@ const TaskApi = {
     }
     // Example: return await axios.post("/tasks", payload);
   },
-
-  // async editTask(id: string, task: Partial<Task>, taskActions: taskActions) {
-  //   const currentTask = taskActions.state.tasks.find((t) => t.id === id);
-  //   if (!currentTask) return;
-
-  //   if (currentTask.isEditing) {
-  //     if (task.name && task.name.trim() !== "") {
-  //       try {
-  //         const response = await api.post("/tasks", {
-  //           listUid: currentTask.listUid,
-  //           projectUid: currentTask.projectUid,
-  //           name: task.name,
-  //           priority: currentTask.priority,
-  //           status: currentTask.status,
-  //         });
-  //         const serverTask = response.data.data;
-  //         console.log("From", serverTask);
-  //         // Replace temporary task with server task
-  //         taskActions.editTask(id, {
-  //           ...serverTask,
-  //           isEditing: false,
-  //         });
-  //         // Create new temporary task
-  //         this.createTask(
-  //           currentTask.listUid,
-  //           currentTask.projectUid,
-  //           taskActions
-  //         );
-  //       } catch (error) {
-  //         console.error("Failed to create task on server:", error);
-  //         throw error;
-  //       }
-  //     }
-  //   }
-  // else {
-  //   // Update existing server task
-  //   try {
-  //     await api.patch(`/tasks/${currentTask.uid}`, task);
-  //     taskActions.updateTask(id, task);
-  //   } catch (error) {
-  //     console.error("Failed to update task:", error);
-  //     throw error;
-  //   }
-  // }
-  // },
 
   async updateTask(uid: string, task: Partial<Task>, taskActions: taskActions) {
     try {
@@ -163,10 +118,11 @@ const TaskApi = {
       if (!selectedProjectUid) return;
       const response = await api.get(`projects/${selectedProjectUid}/tasks`);
       const tasks = response.data;
-      console.log("Fetch from apis: ", tasks);
+      // console.log("Fetch From TaaskApi from apis: ", tasks);
       taskActions.setTasks(tasks.data);
     } catch (error) {
       console.log("Failed to fetch Tasks: ", error);
+      throw error;
     }
   },
 };

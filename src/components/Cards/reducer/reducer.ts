@@ -71,6 +71,13 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
       };
     }
 
+    case "REVERT_LISTS": {
+      return {
+        ...state,
+        lists: action.payload,
+      };
+    }
+
     case "SET_TASKS":
       return { ...state, tasks: action.payload };
 
@@ -147,6 +154,12 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
       return {
         ...state,
         tasks: [...otherLists, ...reordered],
+      };
+    }
+    case "REVERT_TASKS": {
+      return {
+        ...state,
+        tasks: action.payload,
       };
     }
     default:

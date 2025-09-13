@@ -21,6 +21,10 @@ api.interceptors.request.use(
       config.headers = config.headers || {}; // Ensure headers object exists
       config.headers["Authorization"] = `Bearer ${token}`; // Attach token
     }
+
+    // Log full request URL
+    // console.log("[Request]", `${config.baseURL}${config.url}`);
+
     return config;
   },
   (error) => Promise.reject(error) // Forward any request error
@@ -107,6 +111,7 @@ api.interceptors.response.use(
               // Retry the request when token is available
               originalRequest.headers["Authorization"] =
                 `Bearer ${accessToken}`;
+
               resolve(api(originalRequest));
             } else {
               // If token refresh failed, reject the request

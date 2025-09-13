@@ -1,54 +1,102 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# FocusTrack
 
-Currently, two official plugins are available:
+A Kanban-style task management web application built with the PERN (PostgreSQL, Express.js, React, Node.js) stack. FocusTrack enables teams to create, edit, and prioritize tasks with drag-and-drop functionality, while emphasizing a clean, responsive frontend built with React and Chakra UI. The app supports role-based authorization, secure authentication, and scalable backend logic via the Repository Pattern.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+(Frontend-Focused Highlights)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Kanban Board Management: Drag-and-drop tasks between columns, with real-time updates and mobile-optimized CSS for seamless interaction.
+- Task Creation & Editing: Inline editing, deadline prioritization, and reusable components for forms (e.g., signup, project/task modals) with validation and error handling.
+- User & Project Handling: Fetch and assign users to tasks/projects, with pagination, editable tables, and local storage for offline persistence.
+- Authentication & Authorization: Secure login/signup with schema validation, role-based access, and centralized error handling for API calls.
+- Navigation & Routing: Sidebar with deep linking, React Router for SPA navigation, and responsive layouts (fixed mobile issues like input focus on Safari).
+- Additional UI Enhancements: Contact/About pages, reusable components (e.g., for login/signup), and deployment optimizations for Vercel.
+
+(Backend Notes for Completeness)
+
+- Role-Based Authorization and secure user authentication.
+- Repository Pattern in Node.js for scalable logic.
+- Backend APIs documented with Swagger UI.
+
+## Tech Stack
+
+**Client:** React, Chakra UI (for styling and components), TypeScript (with config fixes for typings).
+
+**Server:** Node.js (Express), PostgreSQL, Repository Pattern.
+
+**Other:** Vercel (for deployment with SPA routing), Local Storage (for state persistence), Axios/Fetch (for API integration).
+
+## Prerequisites
+- Node.js 18+ (with npm(backend) or yarn(Frontend))
+- PostgreSQL (for backend database)
+- Git
+## Installation
+
+1. Clone the Repository:
+```bash
+git clone https://github.com/AyushThapaChhetri/ProjectManagement_Forntend.git
+cd FocusTrack
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. Set Up Virtual Environment:
+```bash
+cd client  # or frontend directory if separate
+npm install  # or yarn install
 ```
+3. Install Dependencies:
+```bash
+cd server  # or backend directory
+npm install
+```
+4. Configure Environment:
+- Create .env files in frontend/backend directories (e.g., REACT_APP_API_URL for frontend, DATABASE_URL for backend).
+- Do not commit .env files—use .env.example as a template.
+```bash
+
+```
+
+
+
+
+
+5. Database Setup:
+
+```bash
+cd server
+npm run migrate
+```
+
+6. Create Superuser (for admin access):
+```bash
+python manage.py createsuperuser
+```
+
+7. Run the Frontend Development Server:
+
+```bash
+(Terminal 1)
+cd client
+npm start
+```
+
+8. Run the Backend Server:
+```bash
+(Terminal 2)
+cd server
+npm run dev
+```
+
+
+
+## Usage/Examples
+
+- Login/Signup: Access auth pages to create an account or log in with secure validation.
+- Dashboard: View projects via sidebar; select a project to load Kanban board with tasks.
+- Manage Tasks: Create/edit tasks, drag between columns (To Do, In Progress, Done), assign users, and set deadlines.
+- Projects: Add/edit/delete projects; join via UID with error-handled API calls.
+- Users: Admin views for user management with pagination and delete functionality.
+
+Explore the app's responsive design on mobile—boards adapt with fixed scroll and CSS overflows.

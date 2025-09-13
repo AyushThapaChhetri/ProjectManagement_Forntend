@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState, type ReactNode } from "react";
+import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 
 import { initialState } from "../reducer/taskInitialState";
 import { TaskContext } from "./TaskContext";
@@ -7,6 +7,7 @@ import type { List, Task } from "../reducer/task.types";
 import ListApi from "@/api/ListApi";
 import TaskApi from "@/api/TaskApi";
 import { useProjectContext } from "@/hooks/userProjectContext";
+import api from "@/api/Api";
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const { state: projectState } = useProjectContext();
@@ -92,51 +93,27 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "SET_LISTS", payload: lists });
   };
 
-  const onDrop = (position: number, listUid?: string) => {
-    // console.log(
-    //   `${activeTask} is going to place into ${listUid} and at the postion ${position}`
-    // );
-    // console.log(
-    //   `${activeList} list is going to place into   at the postion ${position}`
-    // );
+  const prevTasksRef = useRef<Task[]>([]);
+  const prevListsRef = useRef<List[]>([]);
 
-    // // First check if we're dropping a list
-    // if (activeList) {
-    //   dispatch({
-    //     type: "MOVE_LIST",
-    //     payload: { listUid: activeList, position },
-    //   });
-    //   setActiveList(null);
-    //   return;
-    // }
-
-    // // Then check if it's a task
-    // if (activeTask && listUid) {
-    //   dispatch({
-    //     type: "MOVE_TASK",
-    //     payload: {
-    //       id: activeTask,
-    //       listUid,
-    //       position,
-    //     },
-    //   });
-    //   setActiveTask(null);
-    //   return;
-    // }
-    // console.log(`onDrop called with position: ${position}, listUid: ${listUid}`);
-    // console.log(`ActiveTask: ${activeTask}, ActiveList: ${activeList}`);
+  const onDrop = async (position: number, listUid?: string) => {
     try {
       // First check if we're dropping a list
       if (activeList) {
+        prevListsRef.current = [...state.lists];
         dispatch({
           type: "MOVE_LIST",
           payload: { listUid: activeList, position },
         });
+
         // Moved setActiveList to dragend callback
         return;
       }
 
       if (activeTask && listUid) {
+        // Capture the previous task state before making changes
+        prevTasksRef.current = [...state.tasks];
+        // Sync first
         dispatch({
           type: "MOVE_TASK",
           payload: {
@@ -145,13 +122,121 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
             position,
           },
         });
-        // Moved setActiveTask to dragend callback
+
+        // Sync with backend, passing the previous state for potential revert
+
         return;
       }
     } finally {
       // Always reset active states after drop
       setActiveList(null);
       setActiveTask(null);
+    }
+  };
+  useEffect(() => {
+    if (prevListsRef.current.length > 0) {
+      syncListOrderWithBackend(state.lists, prevListsRef.current);
+    }
+  }, [state.lists]);
+
+  const syncListOrderWithBackend = async (
+    currentList: List[],
+    previousList: List[]
+  ) => {
+    console.log("List of previous states: ", previousList);
+    console.log("List of states: ", currentList);
+
+    const updated = currentList.map((list: List, index) => {
+      return {
+        uid: list.uid,
+        projectUid: list.projectUid,
+        position: index,
+      };
+    });
+
+    console.log("Updated form of Array: ", updated);
+    try {
+      console.log("This is sent to server : ", { lists: updated });
+
+      await api.patch("/lists/reorder", { lists: updated });
+      console.log("Hello not executed");
+    } catch (error) {
+      console.error("Sync failed:", error);
+      dispatch({
+        type: "REVERT_LISTS",
+        payload: previousList,
+      });
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (prevTasksRef.current.length > 0) {
+      syncTaskOrderWithBackend(state.tasks, prevTasksRef.current);
+      prevTasksRef.current = [];
+    }
+  }, [state.tasks]);
+
+  const syncTaskOrderWithBackend = async (
+    currentTask: Task[],
+    previousTasks: Task[]
+  ) => {
+    // Group tasks by listUid
+    // It groups all tasks into separate arrays based on their listUid.
+    //     {
+    //   "list-1": [taskA, taskB, taskC],
+    //   "list-2": [taskD, taskE],
+
+    // }
+    const tasksByList = currentTask.reduce<Record<string, Task[]>>(
+      (acc, task: Task) => {
+        if (!acc[task.listUid]) {
+          acc[task.listUid] = [];
+        }
+        acc[task.listUid].push(task);
+        return acc;
+      },
+      {}
+    );
+
+    console.log("Task by List form task provider: ", tasksByList);
+
+    // Prepare updates
+    //     For every task inside each list:
+    // Assign it a new order based on its current index (which reflects drag & drop).
+    //     [
+    //   { uid: "task-1", listUid: "list-1", order: 0 },
+    //   { uid: "task-2", listUid: "list-1", order: 1 },
+    //   { uid: "task-3", listUid: "list-2", order: 0 },
+    // ]
+
+    const updates: { uid: string; listUid: string; position: number }[] = [];
+    for (const listUid in tasksByList) {
+      const listTasks = tasksByList[listUid];
+      listTasks.forEach((task, index) => {
+        updates.push({
+          uid: task.uid,
+          listUid: task.listUid,
+          position: index,
+        });
+      });
+    }
+
+    console.log("Hello ", updates);
+    console.log("Updates  form task provider: ", updates);
+    // Send to backend
+
+    try {
+      await api.patch("/tasks/reorder", { tasks: updates });
+
+      console.log("Task order synced");
+    } catch (error) {
+      console.error("Sync failed:", error);
+      dispatch({
+        type: "REVERT_TASKS",
+        payload: previousTasks,
+      });
+      throw error;
     }
   };
 

@@ -28,6 +28,7 @@ import TaskDropArea from "./TaskDropArea";
 import ListApi from "@/api/ListApi";
 import { handleApiError } from "@/utils/handleApiError";
 import { TaskTitleSchema } from "@/schemas/taskSchema";
+import { toast } from "react-toastify";
 type FormValues = InferType<typeof listSchema>;
 type TaskTitleForm = InferType<typeof TaskTitleSchema>;
 
@@ -98,7 +99,7 @@ const Cards = React.memo(
     // console.log("Current state in Cards component:", state);
 
     const handleAddTask = () => {
-      console.log("Task type form opened ");
+      // console.log("Task type form opened ");
       setShowNewInput(true);
       // Wait for textarea to render
       setTimeout(() => {
@@ -133,17 +134,28 @@ const Cards = React.memo(
         }
       }
     };
+    // Custom submit handler that includes frontend validation error handling
+    const handleTaskFormSubmit = handleTaskSubmit(
+      handleTaskSubmitFn,
+      (errors) => {
+        if (errors.name?.message) {
+          toast.error(errors.name.message); // show toast like backend
+        }
+      }
+    );
 
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault(); // prevent newline
-        handleTaskSubmit(handleTaskSubmitFn)();
+        // handleTaskSubmit(handleTaskSubmitFn)();
+        handleTaskFormSubmit();
       }
     };
 
     // const handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
     const handleBlur = () => {
-      handleTaskSubmit(handleTaskSubmitFn)();
+      // handleTaskSubmit(handleTaskSubmitFn)();
+      handleTaskFormSubmit();
     };
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -327,7 +339,7 @@ const Cards = React.memo(
 
             {showNewInput && (
               <form
-                onSubmit={handleTaskSubmit(handleTaskSubmitFn)}
+                onSubmit={handleTaskFormSubmit}
                 style={{
                   width: "100%",
                   display: "contents", // So the form doesn't affect layout

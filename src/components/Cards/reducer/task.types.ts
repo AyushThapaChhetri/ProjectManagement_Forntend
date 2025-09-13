@@ -66,6 +66,7 @@ export interface Task {
   assignedToUsers?: string[];
   createdAt: string;
   updatedAt: string;
+  position?: number;
   // isEditing: boolean;
 }
 
@@ -119,11 +120,13 @@ export type TaskAction =
       type: "MOVE_TASK";
       payload: { uid: string; listUid: string; position: number };
     }
+  | { type: "REVERT_TASKS"; payload: Task[] }
   // Add list actions
   | { type: "SET_LISTS"; payload: List[] }
   | { type: "ADD_LIST"; payload: List }
   | { type: "UPDATE_LIST"; payload: { id: string; updates: Partial<List> } }
   | { type: "DELETE_LIST"; payload: { id: string } }
   | { type: "MOVE_LIST"; payload: { listUid: string; position: number } }
-  | { type: "DELETE_PROJECT_LIST"; payload: { pUid: string } };
+  | { type: "DELETE_PROJECT_LIST"; payload: { pUid: string } }
+  | { type: "REVERT_LISTS"; payload: List[] };
 // | { type: "DELETE_LIST"; payload: string };

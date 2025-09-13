@@ -72,6 +72,7 @@ const ListApi = {
       const response = await api.get(`projects/${selectedProjectUid}/lists`);
       // const response = await api.get("/lists");
       const lists = response.data;
+      // console.log("Fetch From ListApi from apis: ", lists);
       listActions.setLists(lists.data);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
