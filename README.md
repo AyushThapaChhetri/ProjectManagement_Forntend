@@ -1,8 +1,6 @@
-
 # FocusTrack
 
 A Kanban-style task management web application built with the PERN (PostgreSQL, Express.js, React, Node.js) stack. FocusTrack enables teams to create, edit, and prioritize tasks with drag-and-drop functionality, while emphasizing a clean, responsive frontend built with React and Chakra UI. The app supports role-based authorization, secure authentication, and scalable backend logic via the Repository Pattern.
-
 
 ## Features
 
@@ -30,37 +28,49 @@ A Kanban-style task management web application built with the PERN (PostgreSQL, 
 **Other:** Vercel (for deployment with SPA routing), Local Storage (for state persistence), Axios/Fetch (for API integration).
 
 ## Prerequisites
+
 - Node.js 18+ (with npm(backend) or yarn(Frontend))
 - PostgreSQL (for backend database)
 - Git
+
 ## Installation
 
 1. Clone the Repository:
+
 ```bash
 git clone https://github.com/AyushThapaChhetri/ProjectManagement_Forntend.git
 cd FocusTrack
 ```
 
 2. Set Up Virtual Environment:
+
 ```bash
 cd client  # or frontend directory if separate
 npm install  # or yarn install
 ```
+
 3. Install Dependencies:
+
 ```bash
 cd server  # or backend directory
 npm install
 ```
+
 4. Configure Environment:
+
 - Create .env files in frontend/backend directories (e.g., REACT_APP_API_URL for frontend, DATABASE_URL for backend).
 - Do not commit .env files—use .env.example as a template.
-```bash
+- .env.development
 
+```bash
+VITE_API_URL=http://localhost:5000/api
 ```
 
+- .env.local
 
-
-
+```bash
+VITE_API_URL=http://localhost:5000/api
+```
 
 5. Database Setup:
 
@@ -70,6 +80,7 @@ npm run migrate
 ```
 
 6. Create Superuser (for admin access):
+
 ```bash
 python manage.py createsuperuser
 ```
@@ -83,13 +94,12 @@ npm start
 ```
 
 8. Run the Backend Server:
+
 ```bash
 (Terminal 2)
 cd server
 npm run dev
 ```
-
-
 
 ## Usage/Examples
 
